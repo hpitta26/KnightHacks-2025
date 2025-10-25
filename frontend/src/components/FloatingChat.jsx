@@ -88,7 +88,7 @@ function FloatingChat() {
   ];
 
   return (
-    <div className="bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] rounded-2xl shadow-lg flex flex-col h-full">
+    <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-2xl flex flex-col h-full">
       {/* Header */}
       <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c]">
         <div className="flex items-center gap-3">
@@ -112,7 +112,7 @@ function FloatingChat() {
               className={`max-w-[85%] rounded-xl p-2.5 text-xs ${
                 message.role === 'user'
                   ? 'bg-[#28ce78] text-white'
-                  : 'bg-gray-100 dark:bg-[#1a1a1a] text-gray-900 dark:text-white border border-gray-200 dark:border-[#38393c]'
+                  : 'bg-gray-100 dark:bg-[#141414] text-gray-900 dark:text-white border border-gray-200 dark:border-[#38393c]'
               }`}
             >
               <p className="leading-relaxed">{message.content}</p>
@@ -151,7 +151,7 @@ function FloatingChat() {
               <button
                 key={index}
                 onClick={() => setInputValue(question)}
-                className="w-full text-left text-xs p-2 rounded-lg bg-gray-50 dark:bg-[#1a1a1a] hover:bg-gray-100 dark:hover:bg-[#1f1f1f] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#38393c] transition-colors"
+                className="w-full text-left text-xs p-2 rounded-lg bg-gray-50 dark:bg-[#141414] hover:bg-gray-100 dark:hover:bg-[#1f1f1f] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#38393c] transition-colors"
               >
                 {question}
               </button>
@@ -162,7 +162,7 @@ function FloatingChat() {
 
       {/* Input Form */}
       <div className="p-3 border-t border-gray-200 dark:border-[#38393c]">
-        <div className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-300 dark:border-[#38393c] rounded-xl px-2 py-1.5 focus-within:ring-1 focus-within:ring-[#28ce78] focus-within:border-[#28ce78] transition-all flex items-center gap-2">
+        <div className="bg-gray-50 dark:bg-[#141414] border border-gray-300 dark:border-[#38393c] rounded-xl px-2 py-1.5 focus-within:ring-1 focus-within:ring-[#28ce78] focus-within:border-[#28ce78] transition-all flex items-center gap-2">
           <textarea
             ref={inputRef}
             value={inputValue}

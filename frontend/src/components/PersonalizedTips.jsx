@@ -110,7 +110,7 @@ export default function PersonalizedTips() {
         }
     };
     return (
-        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-lg  overflow-hidden flex flex-col">
+        <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-2xl overflow-hidden flex flex-col">
             <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c]">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">

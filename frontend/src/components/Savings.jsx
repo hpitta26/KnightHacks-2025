@@ -18,7 +18,7 @@ function Savings() {
   };
 
   return (
-    <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-lg border border-gray-200 dark:border-[#38393c] overflow-hidden h-full flex flex-col">
+    <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-[#38393c] overflow-hidden h-full flex flex-col">
       {/* Header */}
       <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c] flex items-center justify-between">
         <div className="flex items-center gap-3">
