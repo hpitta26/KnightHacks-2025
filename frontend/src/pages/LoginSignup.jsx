@@ -13,11 +13,11 @@ export default function Login() {
         </div>
 
         {/* Tabs */}
-        <div className="flex rounded-2xl bg-white dark:bg-[#1a1a1a] shadow-sm border border-gray-200 dark:border-[#38393c] overflow-hidden">
+        <div className="flex rounded-2xl bg-gray-100 dark:bg-[#1a1a1a] shadow-sm border border-gray-200 dark:border-[#38393c] overflow-hidden">
           <button
             className={`flex-1 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#28ce78] ${
               tab === "login"
-                ? "bg-white dark:bg-[#141414] text-gray-900 dark:text-white"
+                ? "bg-white dark:bg-[#141414] text-gray-900 dark:text-white shadow-sm"
                 : "text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
             }`}
             onClick={() => setTab("login")}
@@ -28,7 +28,7 @@ export default function Login() {
           <button
             className={`flex-1 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#28ce78] ${
               tab === "signup"
-                ? "bg-white dark:bg-[#141414] text-gray-900 dark:text-white"
+                ? "bg-white dark:bg-[#141414] text-gray-900 dark:text-white shadow-sm"
                 : "text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
             }`}
             onClick={() => setTab("signup")}
