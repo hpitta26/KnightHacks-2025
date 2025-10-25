@@ -1,47 +1,72 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { HiTrendingUp } from 'react-icons/hi';
+import { useState, useEffect } from 'react';
 
 function Networth() {
-  const generateNetworthData = () => {
-    const data = [
-      { date: '2024-03-01', value: 200000, displayDate: 'Mar 1' },
-      { date: '2024-03-15', value: 220000, displayDate: 'Mar 15' },
-      { date: '2024-04-01', value: 235000, displayDate: 'Apr 1' },
-      { date: '2024-04-15', value: 225000, displayDate: 'Apr 15' },
-      { date: '2024-05-01', value: 260000, displayDate: 'May 1' },
-      { date: '2024-05-15', value: 265000, displayDate: 'May 15' },
-      { date: '2024-06-01', value: 245000, displayDate: 'Jun 1' },
-      { date: '2024-06-15', value: 235000, displayDate: 'Jun 15' },
-      { date: '2024-07-01', value: 270000, displayDate: 'Jul 1' },
-      { date: '2024-07-15', value: 272000, displayDate: 'Jul 15' },
-      { date: '2024-08-01', value: 285000, displayDate: 'Aug 1' },
-      { date: '2024-08-15', value: 267000, displayDate: 'Aug 15' },
-      { date: '2024-09-01', value: 246000, displayDate: 'Sep 1' },
-      { date: '2024-09-15', value: 254000, displayDate: 'Sep 15' },
-      { date: '2024-10-01', value: 272000, displayDate: 'Oct 1' },
-      { date: '2024-10-15', value: 295000, displayDate: 'Oct 15' },
-      { date: '2024-10-31', value: 290000, displayDate: 'Oct 31' },
-      { date: '2024-11-15', value: 296000, displayDate: 'Nov 15' },
-      { date: '2024-12-01', value: 305000, displayDate: 'Dec 1' },
-      { date: '2024-12-15', value: 285000, displayDate: 'Dec 15' },
-      { date: '2024-12-31', value: 300000, displayDate: 'Dec 31' },
-      { date: '2025-01-15', value: 320000, displayDate: 'Jan 15' },
-      { date: '2025-01-31', value: 295000, displayDate: 'Jan 31' },
-      { date: '2025-02-15', value: 315000, displayDate: 'Feb 15' },
-      { date: '2025-02-28', value: 315000, displayDate: 'Feb 28' },
-      { date: '2025-03-15', value: 310000, displayDate: 'Mar 15' },
-      { date: '2025-03-31', value: 330000, displayDate: 'Mar 31' },
-      { date: '2025-04-15', value: 340000, displayDate: 'Apr 15' },
-      { date: '2025-04-30', value: 325000, displayDate: 'Apr 30' },
-      { date: '2025-05-15', value: 335000, displayDate: 'May 15' },
-      { date: '2025-05-31', value: 365000, displayDate: 'May 31' },
-      { date: '2025-06-15', value: 350000, displayDate: 'Jun 15' }
-    ];
-    
-    return data;
-  };
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const data = generateNetworthData();
+  // Fetch networth data from backend
+  useEffect(() => {
+    const fetchNetworthData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/get_networth');
+        if (!response.ok) {
+          throw new Error('Failed to fetch networth data');
+        }
+        const networthData = await response.json();
+        setData(networthData);
+      } catch (error) {
+        console.error('Error fetching networth data:', error);
+        // Fallback to empty array if fetch fails
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNetworthData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-[#38393c] overflow-hidden h-full">
+        <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center">
+              <HiTrendingUp className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h2 className="text-sm font-medium text-gray-900 dark:text-white">Net Worth</h2>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 p-6 flex items-center justify-center">
+          <div className="text-gray-500 dark:text-gray-400">Loading networth data...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-[#38393c] overflow-hidden h-full">
+        <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center">
+              <HiTrendingUp className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h2 className="text-sm font-medium text-gray-900 dark:text-white">Net Worth</h2>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 p-6 flex items-center justify-center">
+          <div className="text-gray-500 dark:text-gray-400">No networth data available</div>
+        </div>
+      </div>
+    );
+  }
   
   const currentValue = data[data.length - 1].value;
   const value1DayAgo = 352284;

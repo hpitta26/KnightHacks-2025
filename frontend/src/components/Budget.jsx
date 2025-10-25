@@ -1,42 +1,47 @@
 import { HiCurrencyDollar, HiChevronLeft, HiChevronRight } from 'react-icons/hi';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BudgetOverview from './BudgetOverview';
 import SpendingChart from './SpendingChart';
 
 export default function Budget() {
     const [currentPage, setCurrentPage] = useState(1);
+    const [budgetTargets, setBudgetTargets] = useState([]);
+    const [loading, setLoading] = useState(true);
     const totalPages = 2;
     
     const currentMonth = "December";
-    const currentSpent = 1222;
-    const currentBudget = 5230;
-    const lastMonthSpent = 1322;
-    const progressPercentage = (currentSpent / currentBudget) * 100;
-    const lastMonthPercentage = (lastMonthSpent / currentBudget) * 100;
+    
+    // Calculate totals from fetched data
+    const currentSpent = budgetTargets.reduce((sum, item) => sum + item.spent, 0);
+    const currentBudget = budgetTargets.reduce((sum, item) => sum + item.amount, 0);
+    const lastMonthSpent = budgetTargets.reduce((sum, item) => sum + item.lastMonthSpent, 0);
+    
+    const progressPercentage = currentBudget > 0 ? (currentSpent / currentBudget) * 100 : 0;
+    const lastMonthPercentage = currentBudget > 0 ? (lastMonthSpent / currentBudget) * 100 : 0;
     const difference = currentSpent - lastMonthSpent;
     const isUnderBudget = difference < 0;
 
-    const budgetTargets = [
-        { category: "Rent", amount: 1500, spent: 1500 },
-        { category: "Car Insurance", amount: 300, spent: 300 },
-        { category: "Groceries", amount: 400, spent: 350 },
-        { category: "Utilities", amount: 200, spent: 180 },
-        { category: "Entertainment", amount: 300, spent: 350 },
-        { category: "Savings", amount: 1000, spent: 500 },
-        { category: "Transportation", amount: 200, spent: 150 },
-        { category: "Healthcare", amount: 150, spent: 100 },
-        { category: "Phone Bill", amount: 80, spent: 80 },
-        { category: "Internet", amount: 60, spent: 60 },
-        { category: "Gym Membership", amount: 50, spent: 50 },
-        { category: "Coffee & Dining", amount: 200, spent: 250 },
-        { category: "Clothing", amount: 150, spent: 120 },
-        { category: "Gas", amount: 180, spent: 160 },
-        { category: "Subscriptions", amount: 40, spent: 40 },
-        { category: "Emergency Fund", amount: 500, spent: 300 },
-        { category: "Travel Fund", amount: 300, spent: 200 },
-        { category: "Gifts", amount: 100, spent: 80 },
-        { category: "Dining Out", amount: 150, spent: 200 }
-    ];
+    // Fetch budget data from backend
+    useEffect(() => {
+        const fetchBudgetData = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/get_budget');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch budget data');
+                }
+                const data = await response.json();
+                setBudgetTargets(data);
+            } catch (error) {
+                console.error('Error fetching budget data:', error);
+                // Fallback to empty array if fetch fails
+                setBudgetTargets([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBudgetData();
+    }, []);
 
     const sortedBudgetTargets = [...budgetTargets].sort((a, b) => {
         const aOverBudget = a.spent > a.amount;
@@ -54,6 +59,28 @@ export default function Budget() {
         
         return 0;
     });
+
+    if (loading) {
+        return (
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-lg border border-gray-200 dark:border-[#38393c] overflow-hidden flex flex-col relative">
+                <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c]">
+                    <div className="flex items-center gap-3">
+                        <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+                            <HiCurrencyDollar className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-sm font-bold text-gray-900 dark:text-white">
+                                {currentPage === 1 ? 'Budget' : 'Spending'}
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center justify-center p-8">
+                    <div className="text-gray-500 dark:text-gray-400">Loading budget data...</div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-[#38393c] overflow-hidden flex flex-col relative">

@@ -1,0 +1,21 @@
+[
+    { "category": "Rent", "amount": 1500.00, "spent": 1500.00, "lastMonthSpent": 1500.00 },
+    { "category": "Car Insurance", "amount": 287.45, "spent": 287.45, "lastMonthSpent": 287.45 },
+    { "category": "Groceries", "amount": 425.75, "spent": 387.23, "lastMonthSpent": 412.18 },
+    { "category": "Utilities", "amount": 198.30, "spent": 175.67, "lastMonthSpent": 189.45 },
+    { "category": "Entertainment", "amount": 325.00, "spent": 378.92, "lastMonthSpent": 298.50 },
+    { "category": "Savings", "amount": 1000.00, "spent": 487.50, "lastMonthSpent": 750.25 },
+    { "category": "Transportation", "amount": 185.00, "spent": 142.75, "lastMonthSpent": 168.30 },
+    { "category": "Healthcare", "amount": 175.00, "spent": 98.45, "lastMonthSpent": 125.80 },
+    { "category": "Phone Bill", "amount": 79.99, "spent": 79.99, "lastMonthSpent": 79.99 },
+    { "category": "Internet", "amount": 64.99, "spent": 64.99, "lastMonthSpent": 64.99 },
+    { "category": "Gym Membership", "amount": 49.99, "spent": 49.99, "lastMonthSpent": 49.99 },
+    { "category": "Coffee & Dining", "amount": 225.00, "spent": 267.45, "lastMonthSpent": 198.75 },
+    { "category": "Clothing", "amount": 150.00, "spent": 118.75, "lastMonthSpent": 142.30 },
+    { "category": "Gas", "amount": 195.50, "spent": 167.25, "lastMonthSpent": 182.40 },
+    { "category": "Subscriptions", "amount": 42.99, "spent": 42.99, "lastMonthSpent": 42.99 },
+    { "category": "Emergency Fund", "amount": 500.00, "spent": 312.50, "lastMonthSpent": 425.75 },
+    { "category": "Travel Fund", "amount": 300.00, "spent": 187.25, "lastMonthSpent": 245.60 },
+    { "category": "Gifts", "amount": 125.00, "spent": 78.50, "lastMonthSpent": 95.25 },
+    { "category": "Dining Out", "amount": 175.00, "spent": 223.45, "lastMonthSpent": 198.75 }
+]

@@ -1,12 +1,39 @@
 import { BsPiggyBankFill } from "react-icons/bs";
+import { useState, useEffect } from "react";
 
 function Savings() {
-  const currentAmount = 15706;
-  const goalAmount = 22000;
-  const progressPercentage = (currentAmount / goalAmount) * 100;
-  const remainingAmount = goalAmount - currentAmount;
+  const [savingsData, setSavingsData] = useState({ currentAmount: 0, goalAmount: 0 });
+  const [loading, setLoading] = useState(true);
+
+  // Use the single savings data object
+  const totalCurrentAmount = savingsData.currentAmount;
+  const totalGoalAmount = savingsData.goalAmount;
+  const totalProgressPercentage = totalGoalAmount > 0 ? (totalCurrentAmount / totalGoalAmount) * 100 : 0;
+  const totalRemainingAmount = totalGoalAmount - totalCurrentAmount;
   const monthsRemaining = 12; // Assuming we're calculating for the full year
-  const monthlyTarget = Math.ceil(remainingAmount / monthsRemaining);
+  const monthlyTarget = Math.ceil(totalRemainingAmount / monthsRemaining);
+
+  // Fetch savings data from backend
+  useEffect(() => {
+    const fetchSavingsData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/get_savings');
+        if (!response.ok) {
+          throw new Error('Failed to fetch savings data');
+        }
+        const data = await response.json();
+        setSavingsData(data);
+      } catch (error) {
+        console.error('Error fetching savings data:', error);
+        // Fallback to default object if fetch fails
+        setSavingsData({ currentAmount: 0, goalAmount: 0 });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSavingsData();
+  }, []);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', {
@@ -16,6 +43,26 @@ function Savings() {
       maximumFractionDigits: 0,
     }).format(value);
   };
+
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-[#38393c] overflow-hidden h-full flex flex-col">
+        <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg flex items-center justify-center">
+              <BsPiggyBankFill className="w-4 h-4 text-white" />
+            </div>
+            <div className="flex items-end gap-1">
+              <h2 className="text-sm font-bold text-gray-900 dark:text-white">Savings</h2>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 p-6 flex items-center justify-center">
+          <div className="text-gray-500 dark:text-gray-400">Loading savings data...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-200 dark:border-[#38393c] overflow-hidden h-full flex flex-col">
@@ -51,7 +98,7 @@ function Savings() {
               stroke="currentColor"
               strokeWidth="12"
               fill="none"
-              strokeDasharray={`${progressPercentage * 2.2} 220`}
+              strokeDasharray={`${totalProgressPercentage * 2.2} 220`}
               className="text-teal-500"
               strokeLinecap="round"
             />
@@ -60,10 +107,10 @@ function Savings() {
           {/* Center content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center mt-5">
             <div className="text-2xl font-bold text-teal-600 dark:text-teal-400">
-              {formatCurrency(currentAmount)}
+              {formatCurrency(totalCurrentAmount)}
             </div>
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              of {formatCurrency(goalAmount)}
+              of {formatCurrency(totalGoalAmount)}
             </div>
           </div>
         </div>
