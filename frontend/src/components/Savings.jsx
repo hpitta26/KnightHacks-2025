@@ -146,7 +146,7 @@ function Savings() {
   ];
 
   const ActivityComponent = () => (
-    <div className="flex-1 p-3 overflow-y-auto">
+    <div className="flex-1 p-3 pb-10 overflow-y-auto">
       <div className="space-y-1">
         {activities.map((activity) => (
           <div key={activity.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#1a1a1a] rounded-lg border border-gray-200 dark:border-[#38393c]">
