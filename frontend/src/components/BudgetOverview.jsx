@@ -24,6 +24,7 @@ export default function BudgetOverview({
                                 strokeWidth="8"
                                 fill="none"
                                 className="text-gray-200 dark:text-gray-700"
+                                strokeLinecap="round"
                             />
                             <path
                                 d="M 30 70 A 70 70 0 0 1 170 70"
