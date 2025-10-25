@@ -83,7 +83,7 @@ export default function BudgetOverview({
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-2 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/30" style={{
+                    <div className="space-y-2 overflow-y-auto rounded-lg bg-gray-50 dark:bg-[#1a1a1a]" style={{
                         scrollbarWidth: 'auto',
                         scrollbarColor: '#6b7280 #e5e7eb'
                     }}>
@@ -98,7 +98,7 @@ export default function BudgetOverview({
                                         ? 'bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30'
                                         : isCompleted 
                                             ? 'bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800/30' 
-                                            : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50'
+                                            : 'bg-gray-50 dark:bg-[#141414] hover:bg-gray-100 dark:hover:bg-[#1f1f1f] border border-gray-200 dark:border-[#38393c]'
                                 }`}>
                                     <div className="flex items-center gap-2">
                                         {isOverBudget && (
