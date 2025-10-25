@@ -1,8 +1,8 @@
 import PersonalizedTips from './PersonalizedTips';
-import Budget from './Budget';
+import BudgetSpendingPanel from './BudgetSpendingPanel';
 import FloatingChat from './FloatingChat';
 import Networth from './Networth';
-import Savings from './Savings';
+import SavingsActivityPanel from './SavingsActivityPanel';
 
 function BentoGrid() {
 
@@ -12,10 +12,10 @@ function BentoGrid() {
         <Networth />
       </div>
       <div className="col-span-4 flex h-full flex-col overflow-hidden">
-        <Budget />
+        <BudgetSpendingPanel />
       </div>
       <div className="col-span-3 flex h-full flex-col overflow-hidden">
-        <Savings />
+        <SavingsActivityPanel />
       </div>
       <div className="col-span-3 flex h-full flex-col overflow-hidden">
         <PersonalizedTips />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
-export default function SpendingChart() {
+export default function Spending() {
     const [timeGranularity, setTimeGranularity] = useState('Month');
     const [isDarkMode, setIsDarkMode] = useState(false);
 
