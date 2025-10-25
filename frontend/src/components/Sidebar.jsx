@@ -7,11 +7,11 @@ function Sidebar() {
   const [isCreditOpen, setIsCreditOpen] = useState(false);
 
   return (
-    <aside className="w-80 bg-white dark:bg-[#141414] border-r border-gray-200 dark:border-[#38393c] h-full overflow-y-auto">
-      <div className="p-5 space-y-4">
+    <aside className="w-70 bg-white dark:bg-[#141414] border-r border-gray-200 dark:border-[#38393c] h-full overflow-y-auto">
+      <div className="p-3 space-y-3">
         {/* Net Worth Section */}
         <div className="space-y-1.5">
-        <div className="p-4 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-4">
+        <div className="p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-4">
             <div>
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
                 Net Worth
@@ -45,7 +45,7 @@ function Sidebar() {
         
 
         {/* Cash Section */}
-        <div className="p-4 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3">
+        <div className="p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3">
           <button
             onClick={() => setIsCashOpen(!isCashOpen)}
             className="w-full flex items-center justify-between text-left"
@@ -135,7 +135,7 @@ function Sidebar() {
         </div>
 
         {/* Investments Section */}
-        <div className="p-4 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3">
+        <div className="p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3">
           <button
             onClick={() => setIsInvestmentsOpen(!isInvestmentsOpen)}
             className="w-full flex items-center justify-between text-left"
@@ -246,7 +246,7 @@ function Sidebar() {
         </div>
 
         {/* Credit Section */}
-        <div className="p-4 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3">
+        <div className="p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3">
           <button
             onClick={() => setIsCreditOpen(!isCreditOpen)}
             className="w-full flex items-center justify-between text-left"

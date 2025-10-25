@@ -1,5 +1,7 @@
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import BentoGrid from '../components/BentoGrid';
+import AgentBar from '../components/AgentBar';
 
 function Dashboard({isDark, setIsDark}) {
   return (
@@ -7,12 +9,10 @@ function Dashboard({isDark, setIsDark}) {
         <Navbar isDark={isDark} setIsDark={setIsDark} />
         <div className="flex flex-1 overflow-hidden">
             <Sidebar />
-            <main className="flex-1 flex items-center justify-center overflow-auto">
-                {/* Centered Welcome Text */}
-                <h2 className="text-5xl font-extrabold text-[#28ce78]">
-                    Welcome to Your App
-                </h2>
+            <main className="flex-1 overflow-auto bg-gray-50 dark:bg-[#0a0a0a]">
+                <BentoGrid />
             </main>
+            <AgentBar />
         </div>
     </div>
   );
