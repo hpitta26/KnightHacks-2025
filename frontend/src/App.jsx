@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import Dashboard from './pages/Dashboard'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/Dashboard'
+import Login from './pages/LoginSignup'
+import Navbar from './components/Navbar'
 
 function App() {
   const [isDark, setIsDark] = useState(() => {
@@ -21,8 +23,10 @@ function App() {
 
   return (
     <Router>
+      <Navbar isDark={isDark} setIsDark={setIsDark} />
       <Routes>
-        <Route path='/' element={<Dashboard isDark={isDark} setIsDark={setIsDark} />} />
+        <Route path='/' element={<Dashboard />} />
+        <Route path='/login' element={<Login />} />
       </Routes>
     </Router>
   )
