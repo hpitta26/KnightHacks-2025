@@ -6,9 +6,9 @@ import Networth from './Networth';
 
 function BentoGrid() {
   const components = [
-    <PersonalizedTips key="tips" />,
-    <Budget key="budget" />,
     <Networth key="networth" />,
+    <Budget key="budget" />,
+    <PersonalizedTips key="tips" />,
     <FloatingChat key="chat" />
   ];
 
@@ -28,7 +28,7 @@ function BentoGrid() {
   };
 
   return (
-    <div className={`p-4.5 grid ${getGridLayout(components.length)} gap-4 h-full`}>
+    <div className={`p-3.5 grid ${getGridLayout(components.length)} gap-3.5 h-full`}>
         {components}
     </div>
   );
