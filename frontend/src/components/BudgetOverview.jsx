@@ -1,4 +1,5 @@
 import { HiCheck } from 'react-icons/hi';
+import { IoMdWarning } from 'react-icons/io';
 
 export default function BudgetOverview({ 
     currentMonth, 
@@ -88,25 +89,34 @@ export default function BudgetOverview({
                     }}>
                         {sortedBudgetTargets.map((target, index) => {
                             const isOverBudget = target.spent > target.amount;
-                            const isCompleted = target.spent >= target.amount;
+                            const isCompleted = target.spent >= target.amount && !isOverBudget;
                             const isUnderBudget = target.spent < target.amount;
                             
                             return (
                                 <div key={index} className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
-                                    isCompleted 
-                                        ? 'bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800/30' 
-                                        : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50'
+                                    isOverBudget
+                                        ? 'bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30'
+                                        : isCompleted 
+                                            ? 'bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800/30' 
+                                            : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50'
                                 }`}>
                                     <div className="flex items-center gap-2">
-                                        {isCompleted && (
+                                        {isOverBudget && (
+                                            <div className="p-1 bg-red-500 rounded-full">
+                                                <IoMdWarning className="w-3 h-3 text-white" />
+                                            </div>
+                                        )}
+                                        {isCompleted && !isOverBudget && (
                                             <div className="p-1 bg-green-500 rounded-full">
                                                 <HiCheck className="w-3 h-3 text-white" />
                                             </div>
                                         )}
                                         <span className={`text-sm font-medium ${
-                                            isCompleted 
-                                                ? 'text-green-800 dark:text-green-200 line-through' 
-                                                : 'text-gray-900 dark:text-white'
+                                            isOverBudget
+                                                ? 'text-red-800 dark:text-red-200'
+                                                : isCompleted 
+                                                    ? 'text-green-800 dark:text-green-200 line-through' 
+                                                    : 'text-gray-900 dark:text-white'
                                         }`}>
                                             {target.category}
                                         </span>
@@ -122,9 +132,11 @@ export default function BudgetOverview({
                                             ${target.spent.toLocaleString()}
                                         </span>
                                         <span className={`text-xs ${
-                                            isCompleted 
-                                                ? 'text-green-600 dark:text-green-400' 
-                                                : 'text-gray-500 dark:text-gray-400'
+                                            isOverBudget
+                                                ? 'text-red-500 dark:text-red-400'
+                                                : isCompleted 
+                                                    ? 'text-green-600 dark:text-green-400' 
+                                                    : 'text-gray-500 dark:text-gray-400'
                                         }`}>
                                             / ${target.amount.toLocaleString()}
                                         </span>

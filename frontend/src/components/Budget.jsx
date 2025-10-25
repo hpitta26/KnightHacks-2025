@@ -21,27 +21,37 @@ export default function Budget() {
         { category: "Car Insurance", amount: 300, spent: 300 },
         { category: "Groceries", amount: 400, spent: 350 },
         { category: "Utilities", amount: 200, spent: 180 },
-        { category: "Entertainment", amount: 300, spent: 200 },
+        { category: "Entertainment", amount: 300, spent: 350 },
         { category: "Savings", amount: 1000, spent: 500 },
         { category: "Transportation", amount: 200, spent: 150 },
         { category: "Healthcare", amount: 150, spent: 100 },
         { category: "Phone Bill", amount: 80, spent: 80 },
         { category: "Internet", amount: 60, spent: 60 },
         { category: "Gym Membership", amount: 50, spent: 50 },
-        { category: "Coffee & Dining", amount: 200, spent: 180 },
+        { category: "Coffee & Dining", amount: 200, spent: 250 },
         { category: "Clothing", amount: 150, spent: 120 },
         { category: "Gas", amount: 180, spent: 160 },
         { category: "Subscriptions", amount: 40, spent: 40 },
         { category: "Emergency Fund", amount: 500, spent: 300 },
         { category: "Travel Fund", amount: 300, spent: 200 },
-        { category: "Gifts", amount: 100, spent: 80 }
+        { category: "Gifts", amount: 100, spent: 80 },
+        { category: "Dining Out", amount: 150, spent: 200 }
     ];
 
     const sortedBudgetTargets = [...budgetTargets].sort((a, b) => {
-        const aCompleted = a.spent >= a.amount;
-        const bCompleted = b.spent >= b.amount;
+        const aOverBudget = a.spent > a.amount;
+        const bOverBudget = b.spent > b.amount;
+        const aCompleted = a.spent >= a.amount && !aOverBudget;
+        const bCompleted = b.spent >= b.amount && !bOverBudget;
+        
+        // Over-budget items first
+        if (aOverBudget && !bOverBudget) return -1;
+        if (!aOverBudget && bOverBudget) return 1;
+        
+        // Then completed items
         if (aCompleted && !bCompleted) return -1;
         if (!aCompleted && bCompleted) return 1;
+        
         return 0;
     });
 
