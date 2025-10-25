@@ -8,11 +8,18 @@ function Navbar({ isDark, setIsDark }) {
 
   return (
     <nav className="bg-white dark:bg-[#141414] border-b border-gray-200 dark:border-[#38393c] shadow-sm">
-      <div className="max-w-7xl mx-auto py-3 px-4">
+      <div className="max-w-8xl mx-auto py-3 px-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-[#28ce78]">
-            My App
-          </h1>
+          <div className="flex items-center space-x-1">
+            <img 
+              src="/noun-globalization-7433299.svg" 
+              alt="FinTerra Logo" 
+              className="w-8 h-8 brightness-0 opacity-70 dark:brightness-0 dark:invert dark:opacity-80"
+            />
+            <h1 className="text-2xl font-semibold text-[#28ce78]">
+              FinTerra
+            </h1>
+          </div>
           <div className="flex items-center space-x-8">
             <button
               onClick={() => setIsDark(!isDark)}
