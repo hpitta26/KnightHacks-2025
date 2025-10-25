@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { HiTrendingUp, HiTrendingDown, HiCash, HiChartBar, HiCreditCard, HiLightningBolt } from 'react-icons/hi';
+import { HiTrendingUp, HiTrendingDown, HiCash, HiChartBar, HiCreditCard } from 'react-icons/hi';
+import FloatingChat from './FloatingChat';
 
 function BentoGrid() {
   return (
@@ -47,20 +48,19 @@ function BentoGrid() {
           <p className="text-3xl font-bold">$650K</p>
           <p className="text-xs opacity-75 mt-2">+8.2% from last month</p>
         </div>
-        
         <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-5 text-white shadow-lg h-[calc(50%-0.5rem)]">
-          <div className="flex items-start justify-between mb-2">
-            <HiCreditCard className="w-8 h-8" />
-            <HiTrendingDown className="w-5 h-5" />
-          </div>
-          <p className="text-sm opacity-90 mb-1">Total Liabilities</p>
-          <p className="text-3xl font-bold">$300K</p>
-          <p className="text-xs opacity-75 mt-2">-3.1% from last month</p>
+            <div className="flex items-start justify-between mb-2">
+                <HiCreditCard className="w-8 h-8" />
+                <HiTrendingDown className="w-5 h-5" />
+            </div>
+            <p className="text-sm opacity-90 mb-1">Total Liabilities</p>
+            <p className="text-3xl font-bold">$300K</p>
+            <p className="text-xs opacity-75 mt-2">-3.1% from last month</p>
         </div>
       </div>
 
       {/* Monthly Cash Flow */}
-      <div className="col-span-5 row-span-3 bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 shadow-lg border border-gray-200 dark:border-[#38393c]">
+      <div className="col-span-5 row-span-4 bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 shadow-lg border border-gray-200 dark:border-[#38393c]">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Monthly Cash Flow</h3>
           <HiChartBar className="w-6 h-6 text-[#28ce78]" />
@@ -83,7 +83,7 @@ function BentoGrid() {
       </div>
 
       {/* Investment Distribution */}
-      <div className="col-span-4 row-span-3 bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 shadow-lg border border-gray-200 dark:border-[#38393c]">
+      <div className="col-span-4 row-span-4 bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 shadow-lg border border-gray-200 dark:border-[#38393c]">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Investment Distribution</h3>
         <div className="space-y-3">
           <div>
@@ -125,24 +125,9 @@ function BentoGrid() {
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="col-span-3 row-span-3 bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 shadow-lg border border-gray-200 dark:border-[#38393c] overflow-y-auto">
-        <div className="flex items-center gap-2 mb-4">
-          <HiLightningBolt className="w-5 h-5 text-[#28ce78]" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Activity</h3>
-        </div>
-        <div className="space-y-3">
-          <div className="p-3 bg-gray-50 dark:bg-[#141414] rounded-xl border border-gray-200 dark:border-[#38393c]">
-            <p className="text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
-            <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">AAPL Purchase</p>
-            <p className="text-sm text-[#28ce78] font-semibold">+$2,500</p>
-          </div>
-          <div className="p-3 bg-gray-50 dark:bg-[#141414] rounded-xl border border-gray-200 dark:border-[#38393c]">
-            <p className="text-xs text-gray-500 dark:text-gray-400">1 day ago</p>
-            <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">Dividend Payment</p>
-            <p className="text-sm text-[#28ce78] font-semibold">+$125</p>
-          </div>
-        </div>
+      {/* Financial Advisor Chat */}
+      <div className="col-span-3 row-span-4">
+        <FloatingChat />
       </div>
     </div>
   );

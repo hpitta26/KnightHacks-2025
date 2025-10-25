@@ -1,10 +1,95 @@
 import { useState } from 'react';
 import { HiChevronDown, HiChevronRight } from 'react-icons/hi';
+import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
 
 function Sidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isCashOpen, setIsCashOpen] = useState(false);
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
   const [isCreditOpen, setIsCreditOpen] = useState(false);
+
+  if (isCollapsed) {
+    return (
+      <aside className="w-25 bg-white dark:bg-[#141414] border-r border-gray-200 dark:border-[#38393c] h-full overflow-y-auto">
+        <div className="p-3 space-y-3">
+          {/* Net Worth - Compact with Conditional Display */}
+          <div className="group p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] text-center relative overflow-hidden">
+            {/* Default state - Net Worth content */}
+            <div className="group-hover:opacity-0 transition-opacity duration-200 ease-in-out">
+              <div className="flex items-center justify-center mb-1">
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                  NW
+                </p>
+              </div>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                350K
+              </p>
+            </div>
+            
+            {/* Hover state - Expand icon */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out">
+              <button
+                onClick={() => setIsCollapsed(false)}
+                className="p-2 rounded transition-colors"
+              >
+                <TbLayoutSidebarRightCollapse className="w-8 h-8 text-gray-600 dark:text-gray-400" />
+              </button>
+            </div>
+          </div>
+
+          {/* Assets - Compact */}
+          <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 text-center">
+            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Assets
+            </p>
+            <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+              650K
+            </p>
+          </div>
+
+          {/* Liabilities - Compact */}
+          <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 text-center">
+            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Liab
+            </p>
+            <p className="text-sm font-semibold text-orange-600 dark:text-orange-400">
+              300K
+            </p>
+          </div>
+
+          {/* Cash - Compact */}
+          <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#1a1a1a] text-center">
+            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Cash
+            </p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+              24K
+            </p>
+          </div>
+
+          {/* Investments - Compact */}
+          <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#1a1a1a] text-center">
+            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Invest
+            </p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+              180K
+            </p>
+          </div>
+
+          {/* Credit - Compact */}
+          <div className="p-3 rounded-lg bg-gray-50 dark:bg-[#1a1a1a] text-center">
+            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Credit
+            </p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white">
+              5K
+            </p>
+          </div>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="w-70 bg-white dark:bg-[#141414] border-r border-gray-200 dark:border-[#38393c] h-full overflow-y-auto">
@@ -13,9 +98,17 @@ function Sidebar() {
         <div className="space-y-1.5">
         <div className="p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-4">
             <div>
-                <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
-                Net Worth
-                </h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Net Worth
+                  </h3>
+                  <button
+                    onClick={() => setIsCollapsed(true)}
+                    className="p-1 hover:bg-gray-200 dark:hover:bg-[#2a2a2a] rounded transition-colors"
+                  >
+                    <TbLayoutSidebarLeftCollapse className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  </button>
+                </div>
                 <p className="text-3xl font-bold text-gray-900 dark:text-white">
                 $350,000
                 </p>

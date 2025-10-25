@@ -1,7 +1,6 @@
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import BentoGrid from '../components/BentoGrid';
-import AgentBar from '../components/AgentBar';
 
 function Dashboard({isDark, setIsDark}) {
   return (
@@ -12,7 +11,6 @@ function Dashboard({isDark, setIsDark}) {
             <main className="flex-1 overflow-auto bg-gray-50 dark:bg-[#0a0a0a]">
                 <BentoGrid />
             </main>
-            <AgentBar />
         </div>
     </div>
   );
