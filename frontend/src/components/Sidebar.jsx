@@ -83,7 +83,7 @@ function Sidebar() {
               Credit
             </p>
             <p className="text-sm font-semibold text-gray-900 dark:text-white">
-              5K
+              -5K
             </p>
           </div>
         </div>
