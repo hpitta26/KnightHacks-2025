@@ -32,10 +32,10 @@ function ProfileModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="absolute right-0 mt-2 w-55 z-50" ref={modalRef}>
-      <div className="rounded-lg bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="absolute right-0 mt-2 w-64 z-50" ref={modalRef}>
+      <div className="rounded-lg bg-white dark:bg-[#141414] shadow-lg border border-gray-200 dark:border-[#38393c] overflow-hidden">
         {/* User Info Section */}
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-[#38393c]">
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
             Signed in as
           </p>
@@ -48,7 +48,7 @@ function ProfileModal({ isOpen, onClose }) {
         <div className="py-1">
           <button
             onClick={handleLogout}
-            className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a1a1a] transition-colors"
           >
             <div className="flex items-center">
               <FiLogOut className="w-4 h-4 mr-3" />
