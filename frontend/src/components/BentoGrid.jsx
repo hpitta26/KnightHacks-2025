@@ -4,7 +4,7 @@ import FloatingChat from './FloatingChat';
 
 function BentoGrid() {
   return (
-    <div className="p-4.5 grid grid-cols-12 grid-rows-6 gap-4 h-full">
+    <div className="p-3.5 grid grid-cols-12 grid-rows-6 gap-3.5 h-full">
       {/* Portfolio Overview - Large Card */}
       <div className="col-span-8 row-span-3 bg-gradient-to-br from-[#28ce78] to-[#1ea560] rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
