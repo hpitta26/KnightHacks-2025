@@ -50,19 +50,21 @@ function Sidebar() {
             onClick={() => setIsCashOpen(!isCashOpen)}
             className="w-full flex items-center justify-between text-left"
           >
-            <div>
+            <div className="flex items-center gap-1">
+              {isCashOpen ? (
+                <HiChevronDown className="w-5 h-5 text-gray-400" />
+              ) : (
+                <HiChevronRight className="w-5 h-5 text-gray-400" />
+              )}
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Cash
               </h3>
-              <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+             
+            </div>
+              <p className="text-lg font-medium text-gray-900 dark:text-white mt-1">
                 $24,205
               </p>
-            </div>
-            {isCashOpen ? (
-              <HiChevronDown className="w-5 h-5 text-gray-400" />
-            ) : (
-              <HiChevronRight className="w-5 h-5 text-gray-400" />
-            )}
+            
           </button>
 
           {isCashOpen && (
@@ -80,7 +82,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      $5,036.12
+                      5,036.12
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       3 min ago
@@ -101,7 +103,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      $15,477.09
+                      15,477.09
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       3 min ago
@@ -122,7 +124,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      $3,692.10
+                      3,692.10
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       2 min ago
@@ -140,19 +142,21 @@ function Sidebar() {
             onClick={() => setIsInvestmentsOpen(!isInvestmentsOpen)}
             className="w-full flex items-center justify-between text-left"
           >
-            <div>
+            <div className="flex items-center gap-1">
+              {isInvestmentsOpen ? (
+                <HiChevronDown className="w-5 h-5 text-gray-400" />
+              ) : (
+                <HiChevronRight className="w-5 h-5 text-gray-400" />
+              )}
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Investments
               </h3>
-              <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+             
+            </div>
+            <p className="text-lg font-medium text-gray-900 dark:text-white mt-1">
                 $179,918
               </p>
-            </div>
-            {isInvestmentsOpen ? (
-              <HiChevronDown className="w-5 h-5 text-gray-400" />
-            ) : (
-              <HiChevronRight className="w-5 h-5 text-gray-400" />
-            )}
+            
           </button>
 
           {isInvestmentsOpen && (
@@ -170,7 +174,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      $5,036.12
+                      5,036.12
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       4 min ago
@@ -191,7 +195,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      $11,047.92
+                      11,047.92
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       1 min ago
@@ -212,7 +216,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      $144,694.30
+                      144,694.30
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       1 min ago
@@ -233,7 +237,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      $19,140.34
+                      19,140.34
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       9 hrs ago
@@ -251,19 +255,20 @@ function Sidebar() {
             onClick={() => setIsCreditOpen(!isCreditOpen)}
             className="w-full flex items-center justify-between text-left"
           >
-            <div>
+            <div className="flex items-center gap-1">
+              {isCreditOpen ? (
+                <HiChevronDown className="w-5 h-5 text-gray-400" />
+              ) : (
+                <HiChevronRight className="w-5 h-5 text-gray-400" />
+              )}
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                 Credit
               </h3>
-              <p className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+             
+            </div>
+            <p className="text-lg font-medium text-gray-900 dark:text-white mt-1">
                 -$4,893
               </p>
-            </div>
-            {isCreditOpen ? (
-              <HiChevronDown className="w-5 h-5 text-gray-400" />
-            ) : (
-              <HiChevronRight className="w-5 h-5 text-gray-400" />
-            )}
           </button>
 
           {isCreditOpen && (
@@ -281,7 +286,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      -$1,935.13
+                      -1,935.13
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       2 min ago
@@ -302,7 +307,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      -$2,127.45
+                      -2,127.45
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       5 min ago
@@ -323,7 +328,7 @@ function Sidebar() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      -$830.42
+                      -830.42
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       1 hr ago

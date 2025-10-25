@@ -22,6 +22,16 @@ function Navbar({ isDark, setIsDark }) {
           </div>
           <div className="flex items-center space-x-8">
             <button
+              className="p-2 rounded-lg transition text-gray-700 hover:text-[#28ce78] dark:text-gray-200 dark:hover:text-[#28ce78] cursor-pointer"
+            >
+              Monthly Consultation
+            </button>
+            <button
+              className="p-2 rounded-lg transition text-gray-700 hover:text-[#28ce78] dark:text-gray-200 dark:hover:text-[#28ce78] cursor-pointer"
+            >
+              Export Data
+            </button>
+            <button
               onClick={() => setIsDark(!isDark)}
               className="p-2 rounded-lg transition text-gray-700 hover:text-[#28ce78] dark:text-gray-200 dark:hover:text-[#28ce78] cursor-pointer"
               aria-label="Toggle dark mode"

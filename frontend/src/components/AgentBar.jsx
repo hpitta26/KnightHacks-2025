@@ -185,7 +185,7 @@ function AgentBar() {
             disabled={!inputValue.trim() || isTyping}
             className={`p-1 transition-colors rounded-lg disabled:cursor-not-allowed shrink-0 ${
               !(!inputValue.trim() || isTyping) 
-                ? 'text-[#28ce78] hover:text-[#1ea560] hover:bg-gray-200 dark:hover:bg-[#2a2a2a] cursor-pointer' 
+                ? 'text-[#28ce78] hover:text-[#1ea560] cursor-pointer' 
                 : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
             }`}
           >
