@@ -1,6 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Activity() {
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch activities data from backend
+  useEffect(() => {
+    const fetchActivitiesData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/get_activities');
+        if (!response.ok) {
+          throw new Error('Failed to fetch activities data');
+        }
+        const data = await response.json();
+        // Convert timestamp strings to Date objects
+        const processedData = data.map(activity => ({
+          ...activity,
+          timestamp: new Date(activity.timestamp)
+        }));
+        setActivities(processedData);
+      } catch (error) {
+        console.error('Error fetching activities data:', error);
+        // Fallback to empty array if fetch fails
+        setActivities([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivitiesData();
+  }, []);
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -10,129 +40,21 @@ function Activity() {
     }).format(value);
   };
 
-  // Activity data
-  const activities = [
-    {
-      id: 1,
-      type: 'in',
-      amount: 2500,
-      account: 'Checking Account',
-      description: 'Salary Deposit',
-      vendor: 'TechCorp Inc.',
-      timestamp: new Date('2024-12-15T09:00:00'),
-      category: 'Income'
-    },
-    {
-      id: 2,
-      type: 'out',
-      amount: 1200,
-      account: 'Savings Account',
-      description: 'Emergency Fund Transfer',
-      vendor: 'Internal Transfer',
-      timestamp: new Date('2024-12-14T14:30:00'),
-      category: 'Transfer'
-    },
-    {
-      id: 3,
-      type: 'in',
-      amount: 500,
-      account: 'Investment Account',
-      description: 'Dividend Payment',
-      vendor: 'Apple Inc.',
-      timestamp: new Date('2024-12-13T11:15:00'),
-      category: 'Investment'
-    },
-    {
-      id: 4,
-      type: 'out',
-      amount: 800,
-      account: 'Checking Account',
-      description: 'Rent Payment',
-      vendor: 'Sunset Apartments',
-      timestamp: new Date('2024-12-12T08:00:00'),
-      category: 'Housing'
-    },
-    {
-      id: 5,
-      type: 'in',
-      amount: 300,
-      account: 'Savings Account',
-      description: 'Interest Earned',
-      vendor: 'Chase Bank',
-      timestamp: new Date('2024-12-11T16:45:00'),
-      category: 'Interest'
-    },
-    {
-      id: 6,
-      type: 'out',
-      amount: 150,
-      account: 'Checking Account',
-      description: 'Grocery Shopping',
-      vendor: 'Whole Foods Market',
-      timestamp: new Date('2024-12-10T18:20:00'),
-      category: 'Food'
-    },
-    {
-      id: 7,
-      type: 'out',
-      amount: 45,
-      account: 'Checking Account',
-      description: 'Coffee & Pastry',
-      vendor: 'Starbucks',
-      timestamp: new Date('2024-12-09T07:30:00'),
-      category: 'Food'
-    },
-    {
-      id: 8,
-      type: 'out',
-      amount: 89,
-      account: 'Checking Account',
-      description: 'Gas Station',
-      vendor: 'Shell',
-      timestamp: new Date('2024-12-08T16:15:00'),
-      category: 'Transportation'
-    },
-    {
-      id: 9,
-      type: 'in',
-      amount: 75,
-      account: 'Checking Account',
-      description: 'Freelance Payment',
-      vendor: 'Design Studio LLC',
-      timestamp: new Date('2024-12-07T13:20:00'),
-      category: 'Income'
-    },
-    {
-      id: 10,
-      type: 'out',
-      amount: 25,
-      account: 'Checking Account',
-      description: 'Streaming Service',
-      vendor: 'Netflix',
-      timestamp: new Date('2024-12-06T00:00:00'),
-      category: 'Entertainment'
-    },
-    {
-      id: 11,
-      type: 'out',
-      amount: 120,
-      account: 'Checking Account',
-      description: 'Gym Membership',
-      vendor: 'Planet Fitness',
-      timestamp: new Date('2024-12-05T10:00:00'),
-      category: 'Health'
-    },
-    {
-      id: 12,
-      type: 'in',
-      amount: 200,
-      account: 'Investment Account',
-      description: 'Stock Sale',
-      vendor: 'Tesla Inc.',
-      timestamp: new Date('2024-12-04T15:45:00'),
-      category: 'Investment'
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="flex-1 p-6 flex items-center justify-center">
+        <div className="text-gray-500 dark:text-gray-400">Loading activities...</div>
+      </div>
+    );
+  }
+
+  if (activities.length === 0) {
+    return (
+      <div className="flex-1 p-6 flex items-center justify-center">
+        <div className="text-gray-500 dark:text-gray-400">No activities found</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 p-3 pb-10 overflow-y-auto">

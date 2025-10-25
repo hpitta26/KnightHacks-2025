@@ -128,3 +128,18 @@ def get_networth():
         raise HTTPException(status_code=500, detail="Invalid JSON in networth data")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error reading networth data: {e}")
+
+
+@app.get("/get_activities")
+def get_activities():
+    """Get activities data from activity.json file"""
+    try:
+        with open("data/activity.json", "r") as file:
+            activities_data = json.load(file)
+        return activities_data
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Activities data not found")
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Invalid JSON in activities data")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error reading activities data: {e}")
