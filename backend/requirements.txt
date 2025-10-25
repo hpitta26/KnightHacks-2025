@@ -15,6 +15,7 @@ cryptography==46.0.3
 docstring_parser==0.17.0
 fastapi==0.120.0
 google-adk==1.17.0
+google-ai-generativelanguage==0.6.15
 google-api-core==2.27.0
 google-api-python-client==2.185.0
 google-auth==2.41.1
@@ -36,13 +37,14 @@ google-cloud-storage==2.19.0
 google-cloud-trace==1.17.0
 google-crc32c==1.7.1
 google-genai==1.46.0
+google-generativeai==0.8.5
 google-resumable-media==2.7.2
 googleapis-common-protos==1.71.0
 graphviz==0.21
 grpc-google-iam-v1==0.14.3
 grpc-interceptor==0.15.4
 grpcio==1.76.0
-grpcio-status==1.76.0
+grpcio-status==1.71.2
 h11==0.16.0
 httpcore==1.0.9
 httplib2==0.31.0
@@ -68,7 +70,7 @@ opentelemetry-sdk==1.37.0
 opentelemetry-semantic-conventions==0.58b0
 packaging==25.0
 proto-plus==1.26.1
-protobuf==6.33.0
+protobuf==5.29.5
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pycparser==2.23
@@ -93,6 +95,7 @@ sqlparse==0.5.3
 sse-starlette==3.0.2
 starlette==0.48.0
 tenacity==8.5.0
+tqdm==4.67.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 tzlocal==5.3.1
