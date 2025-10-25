@@ -23,9 +23,8 @@ function App() {
 
   return (
     <Router>
-      <Navbar isDark={isDark} setIsDark={setIsDark} />
       <Routes>
-        <Route path='/' element={<Dashboard />} />
+        <Route path='/' element={<Dashboard isDark={isDark} setIsDark={setIsDark} />} />
         <Route path='/login' element={<Login />} />
       </Routes>
     </Router>

@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [tab, setTab] = useState("login");
 
   return (
-    <div className="min-h-screen grid place-items-center bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 p-6">
+    <div className="min-h-screen grid place-items-center bg-linear-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 p-6">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Welcome</h1>
@@ -50,6 +51,7 @@ export default function Login() {
 }
 
 function LoginForm() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -61,24 +63,13 @@ function LoginForm() {
     e.preventDefault();
     setErrors(null);
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setErrors("Please enter a valid email address.");
-      return;
-    }
-    if (password.length < 8) {
-      setErrors("Password must be at least 8 characters.");
-      return;
-    }
-
-    try {
+    // Dummy login logic - check for specific credentials
+    if (email === "johndoe@example.com" && password === "dev1234567") {
       setLoading(true);
-      // TODO: Replace with your API call
-      await new Promise((res) => setTimeout(res, 800));
-      alert(`Logged in as ${email} ${remember ? "(remembered)" : ""}`);
-    } catch (err) {
-      setErrors("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+      await new Promise((res) => setTimeout(res, 500));
+      navigate("/");
+    } else {
+      setErrors("Invalid email or password.");
     }
   };
 
@@ -93,13 +84,12 @@ function LoginForm() {
       <Field label="Email" htmlFor="email">
         <input
           id="email"
-          type="email"
+          type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="you@example.com"
           autoComplete="email"
-          required
         />
       </Field>
 
@@ -113,8 +103,6 @@ function LoginForm() {
             className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 pr-10 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="••••••••"
             autoComplete="current-password"
-            required
-            minLength={8}
           />
           <button
             type="button"
@@ -156,6 +144,17 @@ function LoginForm() {
       >
         Continue with Google
       </button>
+
+      <button
+        type="button"
+        onClick={() => {
+          setEmail("johndoe@example.com");
+          setPassword("dev1234567");
+        }}
+        className="w-full text-indigo-700 dark:text-indigo-300 text-sm cursor-pointer underline"
+      >
+        Fill Credentials
+      </button>
     </form>
   );
 }
@@ -173,12 +172,6 @@ function SignupForm({ switchToLogin }) {
   const onSubmit = async (e) => {
     e.preventDefault();
     setErrors(null);
-
-    if (name.trim().length < 2) return setErrors("Please enter your full name.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setErrors("Please enter a valid email address.");
-    if (password.length < 8) return setErrors("Password must be at least 8 characters.");
-    if (password !== confirm) return setErrors("Passwords do not match.");
-    if (!agree) return setErrors("You must agree to the Terms to continue.");
 
     try {
       setLoading(true);
@@ -210,21 +203,18 @@ function SignupForm({ switchToLogin }) {
           className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="Ada Lovelace"
           autoComplete="name"
-          required
-          minLength={2}
         />
       </Field>
 
       <Field label="Email" htmlFor="signup-email">
         <input
           id="signup-email"
-          type="email"
+          type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="you@example.com"
           autoComplete="email"
-          required
         />
       </Field>
 
@@ -238,8 +228,6 @@ function SignupForm({ switchToLogin }) {
             className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 pr-10 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="At least 8 characters"
             autoComplete="new-password"
-            required
-            minLength={8}
           />
           <button
             type="button"
@@ -261,8 +249,6 @@ function SignupForm({ switchToLogin }) {
           className="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-500"
           placeholder="Re-enter password"
           autoComplete="new-password"
-          required
-          minLength={8}
         />
       </Field>
 
