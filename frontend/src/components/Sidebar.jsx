@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { HiChevronDown, HiChevronRight } from 'react-icons/hi';
 
 function Sidebar() {
-  const [isCashOpen, setIsCashOpen] = useState(true);
-  const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(true);
-  const [isCreditOpen, setIsCreditOpen] = useState(true);
+  const [isCashOpen, setIsCashOpen] = useState(false);
+  const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
+  const [isCreditOpen, setIsCreditOpen] = useState(false);
 
   return (
     <aside className="w-80 bg-white dark:bg-[#141414] border-r border-gray-200 dark:border-[#38393c] h-full overflow-y-auto">
