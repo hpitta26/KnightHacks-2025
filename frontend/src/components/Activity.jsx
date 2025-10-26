@@ -8,7 +8,7 @@ function Activity() {
   useEffect(() => {
     const fetchActivitiesData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/get_activities');
+        const response = await fetch('/api/get_activities');
         if (!response.ok) {
           throw new Error('Failed to fetch activities data');
         }

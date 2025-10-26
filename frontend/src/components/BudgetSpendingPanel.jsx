@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Budget from './Budget';
 import Spending from './Spending';
 
-export default function BudgetSpendingPanel() {
+export default function BudgetSpendingPanel({ budgetData }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [budgetTargets, setBudgetTargets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ export default function BudgetSpendingPanel() {
     useEffect(() => {
         const fetchBudgetData = async () => {
             try {
-                const response = await fetch('http://localhost:8000/get_budget');
+                const response = await fetch('/api/get_budget');
                 if (!response.ok) {
                     throw new Error('Failed to fetch budget data');
                 }
@@ -42,6 +42,13 @@ export default function BudgetSpendingPanel() {
 
         fetchBudgetData();
     }, []);
+
+    useEffect(() => {
+        if (budgetData && Array.isArray(budgetData)) {
+            console.log('Updating budget with approved data:', budgetData);
+            setBudgetTargets(budgetData);
+        }
+    }, [budgetData]);
 
     const sortedBudgetTargets = [...budgetTargets].sort((a, b) => {
         const aOverBudget = a.spent > a.amount;

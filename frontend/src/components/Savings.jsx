@@ -17,7 +17,7 @@ function Savings() {
   useEffect(() => {
     const fetchSavingsData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/get_savings');
+        const response = await fetch('/api/get_savings');
         if (!response.ok) {
           throw new Error('Failed to fetch savings data');
         }

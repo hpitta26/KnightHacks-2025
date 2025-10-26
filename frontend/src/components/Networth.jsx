@@ -28,7 +28,7 @@ function Networth() {
   useEffect(() => {
     const fetchNetworthData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/get_networth');
+        const response = await fetch('/api/get_networth');
         if (!response.ok) {
           throw new Error('Failed to fetch networth data');
         }

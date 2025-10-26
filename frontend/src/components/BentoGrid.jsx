@@ -7,9 +7,14 @@ import SavingsActivityPanel from './SavingsActivityPanel';
 
 function BentoGrid() {
   const [chatMessage, setChatMessage] = useState('');
+  const [budgetData, setBudgetData] = useState(null);
 
   const handleConsult = (tip) => {
     setChatMessage(`Consult me on <tip>${tip}</tip>`);
+  };
+
+  const handleBudgetApproved = (newBudgetData) => {
+    setBudgetData(newBudgetData);
   };
 
   return (
@@ -18,7 +23,7 @@ function BentoGrid() {
         <Networth />
       </div>
       <div className="col-span-4 flex h-full flex-col overflow-hidden">
-        <BudgetSpendingPanel />
+        <BudgetSpendingPanel budgetData={budgetData} />
       </div>
       <div className="col-span-3 flex h-full flex-col overflow-hidden">
         <SavingsActivityPanel />
@@ -27,7 +32,11 @@ function BentoGrid() {
         <PersonalizedTips onConsult={handleConsult} />
       </div>
       <div className="col-span-2 flex h-full flex-col overflow-hidden">
-        <FloatingChat messageValue={chatMessage} onMessageChange={setChatMessage} />
+        <FloatingChat 
+          messageValue={chatMessage} 
+          onMessageChange={setChatMessage} 
+          onBudgetApproved={handleBudgetApproved}
+        />
       </div>
     </div>
   );
