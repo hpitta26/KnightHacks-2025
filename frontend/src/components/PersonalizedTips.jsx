@@ -19,8 +19,12 @@ export default function PersonalizedTips({ onConsult }) {
     }, [openDropdown]);
 
     const handleAction = (tip, action) => {
-        if (action === 'consult' && onConsult) {
-            onConsult(tip.description);
+        if (action === 'consult') {
+            // Send the tip description to the chat
+            const messageText = `${tip.description}`;
+            if (onConsult) {
+                onConsult(messageText);
+            }
         } else if (action === 'dismiss') {
             setDismissedTips(prev => new Set(prev).add(tip.id));
         }

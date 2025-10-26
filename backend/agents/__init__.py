@@ -1,1 +1,1 @@
-from .agents import investment_analyzer
+from .agents import investment_analyzer, consultant
