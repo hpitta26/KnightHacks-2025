@@ -19,7 +19,7 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Sync with external messageValue
+  // Sync with external messageValue and auto-send
   useEffect(() => {
     if (messageValue && messageValue !== inputValue) {
       if (messageValue === 'CONSULTATION_BUDGET_ANALYSIS') {
@@ -38,6 +38,71 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
         setInputValue(messageValue);
       }
     }
+
+    const sendAutoMessage = async () => {
+      const newUserMessage = {
+        id: Date.now(),
+        role: 'user',
+        content: messageValue,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, newUserMessage]);
+      setIsTyping(true);
+
+      // Call the backend endpoint
+      try {
+        // Check if it's a consultation query
+        if (messageValue.includes('Consult me on')) {
+          const response = await fetch('http://localhost:8000/consultation', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tip_description: messageValue })
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            const aiResponse = {
+              id: Date.now() + 1,
+              role: 'assistant',
+              content: data.reply,
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, aiResponse]);
+          } else {
+            throw new Error('Failed to get consultation');
+          }
+        } else {
+          // For other queries, show a placeholder response
+          const aiResponse = {
+            id: Date.now() + 1,
+            role: 'assistant',
+            content: 'I can help you with investment analysis. Try asking about your portfolio or type "investments" to get started.',
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiResponse]);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        const errorResponse = {
+          id: Date.now() + 1,
+          role: 'assistant',
+          content: 'Sorry, I encountered an error. Please try again.',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorResponse]);
+      } finally {
+        setIsTyping(false);
+        if (onMessageChange) {
+          onMessageChange('');
+        }
+      }
+    };
+
+    sendAutoMessage();
+
   }, [messageValue]);
 
   const scrollToBottom = () => {
@@ -377,7 +442,7 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
                   })}
                 </div>
               ) : (
-                <p className="leading-relaxed whitespace-pre-line">{parseBoldText(message.content)}</p>
+                <div className="leading-relaxed whitespace-pre-line">{message.content}</div>
               )}
               <p className={`text-xs mt-1 ${
                 message.role === 'user' 

@@ -10,7 +10,7 @@ function BentoGrid({ consultationState, onBudgetApproved, onInvestmentAnalysisCo
   const [budgetData, setBudgetData] = useState(null);
 
   const handleConsult = (tip) => {
-    setChatMessage(`Consult me on <tip>${tip}</tip>`);
+    setChatMessage(`Consult me on:\n${tip}`);
   };
 
   const handleBudgetApproved = (newBudgetData) => {

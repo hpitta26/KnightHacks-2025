@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
-from agents.agents import investment_analyzer, budget_analyzer
+from agents.agents import investment_analyzer, budget_analyzer, consultant
 
 load_dotenv()
 
@@ -169,6 +169,86 @@ class AnalyzeBudgetResponse(BaseModel):
     reply: str
     model: str
 
+class ConsultationRequest(BaseModel):
+    tip_description: str
+
+class ConsultationResponse(BaseModel):
+    reply: str
+    model: str
+
+
+# Hardcoded consultation data (financial data relevant to each tip)
+CONSULTATION_DATA = {
+    "budget_spending": {
+        "category": "budget",
+        "last_month_budget": 5000,
+        "last_month_spending": 5450,
+        "overspent_by": 450,
+        "top_categories": [
+            {"name": "Dining Out", "spent": 1200, "budgeted": 800},
+            {"name": "Entertainment", "spent": 650, "budgeted": 500},
+            {"name": "Shopping", "spent": 1800, "budgeted": 1500}
+        ]
+    },
+    "portfolio_international": {
+        "category": "investments",
+        "total_portfolio_value": 180000,
+        "us_stocks_value": 150000,
+        "international_stocks_value": 8500,
+        "international_percentage": 4.7,
+        "recommended_international_percentage": 30
+    },
+    "emergency_fund": {
+        "category": "savings",
+        "current_amount": 12000,
+        "target_amount": 15000,
+        "months_remaining": 2,
+        "monthly_contribution": 1500,
+        "is_on_track": True
+    },
+    "401k_contribution": {
+        "category": "tax",
+        "current_contribution": 15000,
+        "max_contribution_limit": 23000,
+        "remaining_until_max": 8000,
+        "months_until_year_end": 3,
+        "current_salary": 120000
+    },
+    "credit_utilization": {
+        "category": "credit",
+        "total_credit_limit": 15000,
+        "current_balance": 5250,
+        "utilization_percentage": 35,
+        "recommended_percentage": 30,
+        "excess_utilization": 750
+    },
+    "dividend_opportunity": {
+        "category": "investments",
+        "current_dividend_income": 0,
+        "total_portfolio_value": 180000,
+        "suggested_dividend_stocks": ["VYM", "SCHD", "DVY"],
+        "estimated_dividend_yield": "3-4%"
+    },
+    "tech_sector_growth": {
+        "category": "market",
+        "current_tech_allocation": 85000,
+        "tech_allocation_percentage": 47,
+        "sector_performance": "Strong growth potential",
+        "tech_holdings": ["QQQ", "AAPL", "MSFT"]
+    },
+    "debt_reduction": {
+        "category": "debt",
+        "total_debt_start_year": 35000,
+        "current_total_debt": 29750,
+        "debt_paid_off": 5250,
+        "percentage_reduced": 15,
+        "debt_breakdown": [
+            {"type": "Credit Card", "balance": 5250},
+            {"type": "Auto Loan", "balance": 12500},
+            {"type": "Student Loan", "balance": 12000}
+        ]
+    }
+}
 
 # Hardcoded investment data
 INVESTMENT_DATA = {
@@ -306,7 +386,6 @@ Provide specific insights and actionable recommendations based on the holdings s
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Investment analysis error: {e}")
-
 
 @app.post("/api/analyze_budget")
 async def analyze_budget():
@@ -492,3 +571,92 @@ Analyze their current budget allocation and spending patterns, and provide speci
         # import traceback
         # traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error analyzing budget: {e}")
+
+
+@app.post("/consultation", response_model=ConsultationResponse)
+async def consultation(request: ConsultationRequest):
+    """Handle consultation requests from financial tips"""
+    if not API_KEY:
+        raise HTTPException(status_code=500, detail="GOOGLE_API_KEY is not set")
+
+    try:
+        # Map tip descriptions to consultation data keys
+        tip_description = request.tip_description.lower()
+        
+        # Determine which consultation data to use based on the tip
+        consultation_key = None
+        if "spending" in tip_description or "budget" in tip_description:
+            consultation_key = "budget_spending"
+        elif "international" in tip_description or "portfolio" in tip_description:
+            consultation_key = "portfolio_international"
+        elif "emergency" in tip_description or "savings" in tip_description or "fund" in tip_description:
+            consultation_key = "emergency_fund"
+        elif "401k" in tip_description or "contribution" in tip_description or "tax" in tip_description:
+            consultation_key = "401k_contribution"
+        elif "credit" in tip_description or "utilization" in tip_description:
+            consultation_key = "credit_utilization"
+        elif "dividend" in tip_description:
+            consultation_key = "dividend_opportunity"
+        elif "tech" in tip_description or "sector" in tip_description or "market" in tip_description:
+            consultation_key = "tech_sector_growth"
+        elif "debt" in tip_description:
+            consultation_key = "debt_reduction"
+        else:
+            consultation_key = "budget_spending"  # default
+        
+        # Get the relevant consultation data
+        consultation_data = CONSULTATION_DATA.get(consultation_key, {})
+        
+        # Prepare the prompt
+        consultation_context = json.dumps(consultation_data, indent=2)
+        
+        # Clean up the tip description (remove "Consult me on:" if present)
+        clean_tip = request.tip_description.replace("Consult me on:", "").replace("Consult me on", "").strip()
+        
+        prompt = f"""You flagged this financial tip for the user: "{clean_tip}"
+
+Relevant Financial Data:
+{consultation_context}
+
+The user is now asking you for advice on how to address this issue. Provide a concise, actionable response that acknowledges you created this tip and gives them specific steps to resolve it."""
+
+        # Generate unique session ID for this consultation
+        session_id = f"consultation_{uuid.uuid4().hex[:8]}"
+        user_id = "api_user"
+        
+        # Create session
+        await session_service.create_session(
+            app_name=APP_NAME,
+            user_id=user_id,
+            session_id=session_id,
+            state={"prompt": prompt}
+        )
+        
+        # Create runner with the consultant agent
+        runner = Runner(
+            agent=consultant,
+            app_name=APP_NAME,
+            session_service=session_service
+        )
+        
+        # Create a user message to trigger the agent
+        user_message = Content(parts=[Part(text=prompt)])
+        
+        # Run the agent
+        final_response = ""
+        async for event in runner.run_async(
+            user_id=user_id,
+            session_id=session_id,
+            new_message=user_message
+        ):
+            if event.is_final_response() and event.content and event.content.parts:
+                final_response = event.content.parts[0].text
+                break
+        
+        return ConsultationResponse(reply=final_response, model="consultant")
+
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Consultation error: {e}")
