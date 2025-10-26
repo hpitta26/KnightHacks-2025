@@ -122,16 +122,16 @@ export default function Spending() {
                             <Tooltip 
                                 formatter={(value) => [`$${value.toLocaleString()}`, 'Spending']}
                                 labelStyle={{ 
-                                    color: isDarkMode ? "#e5e7eb" : "#374151"
+                                    color: isDarkMode ? "#ffffff" : "#374151"
                                 }}
                                 contentStyle={{ 
-                                    backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb", 
-                                    border: isDarkMode ? "1px solid #4b5563" : "1px solid #e5e7eb",
+                                    backgroundColor: isDarkMode ? "#1a1a1a" : "#f9fafb", 
+                                    border: isDarkMode ? "1px solid #38393c" : "1px solid #e5e7eb",
                                     borderRadius: '8px',
-                                    color: isDarkMode ? "#e5e7eb" : "#374151"
+                                    color: isDarkMode ? "#ffffff" : "#374151"
                                 }}
                                 cursor={{
-                                    fill: isDarkMode ? 'rgba(55, 65, 81, 0.2)' : 'rgba(243, 244, 246, 0.5)',
+                                    fill: isDarkMode ? 'rgba(56, 57, 60, 0.2)' : 'rgba(243, 244, 246, 0.5)',
                                     stroke: 'transparent'
                                 }}
                             />
