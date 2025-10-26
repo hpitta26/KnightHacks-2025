@@ -2,8 +2,18 @@ import { useState, useRef, useEffect } from 'react';
 import { HiSparkles } from 'react-icons/hi';
 import { FaCircleArrowUp } from 'react-icons/fa6';
 import { HiMiniPencilSquare } from "react-icons/hi2";
+import { useConsultation } from '../contexts/ConsultationContext';
 
-function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, consultationState, onInvestmentAnalysis, onInvestmentAnalysisCompleted, setIsInvestmentAnalysisLoading }) {
+function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) {
+  const {
+    isConsultationMode,
+    consultationState,
+    setIsInvestmentAnalysisLoading,
+    handleInvestmentAnalysisCompleted,
+    handleInvestmentAnalysis,
+    chatMessage: contextChatMessage,
+    setChatMessage: setContextChatMessage
+  } = useConsultation();
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -18,6 +28,59 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
   const [lastBudgetAnalysis, setLastBudgetAnalysis] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Handle residual income analysis from context
+  useEffect(() => {
+    if (contextChatMessage === 'CONSULTATION_RESIDUAL_INCOME_ANALYSIS') {
+      // Add user message first
+      const userMessage = {
+        id: Date.now(),
+        role: 'user',
+        content: 'Analyze my residual income',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, userMessage]);
+      setContextChatMessage(''); // Clear the context message
+      
+      // Show typing indicator immediately
+      setIsTyping(true);
+      
+      // Set 4-second timeout before showing analysis
+      setTimeout(() => {
+        // Stop typing indicator and add actual response
+        setIsTyping(false);
+        
+        const residualIncomeMessage = {
+          id: Date.now() + 2,
+          role: 'assistant',
+          content: `Based on your financial analysis, I've identified $2,000 in residual income that can be strategically allocated.
+
+**Recommended Allocation:**
+
+**Savings (40% - $800):**
+- Emergency Fund: $400 - Build your emergency fund to cover 3-6 months of expenses
+- High-Yield Savings: $400 - Consider a high-yield savings account for short-term goals
+
+**Investments (60% - $1,200):**
+- Retirement Accounts: $600 - Maximize your 401(k) or IRA contributions
+- Index Funds: $400 - Invest in diversified index funds like VTI or SPY
+- Individual Stocks: $200 - Consider blue-chip stocks for long-term growth
+
+**Next Steps:**
+1. Set up automatic transfers to your savings account
+2. Increase your 401(k) contribution by $600/month
+3. Open a brokerage account for the remaining $600
+4. Review and rebalance quarterly
+
+This allocation balances growth potential with financial security, ensuring your money works for you while maintaining liquidity for unexpected expenses.`,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, residualIncomeMessage]);
+      }, 4000); // 3-second delay
+    }
+  }, [contextChatMessage, setContextChatMessage]);
 
   // Sync with external messageValue and auto-send
   useEffect(() => {
@@ -133,12 +196,12 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
 
     // Call the backend endpoint
     try {
-      // Check if it's an investment-related query
+      // Check if it's an investment-related query (only during consultation)
       const isInvestmentQuery = currentInput.toLowerCase().includes('investment') || 
                                 currentInput.toLowerCase().includes('portfolio') ||
                                 currentInput.toLowerCase().trim() === 'investments';
 
-      if (isInvestmentQuery) {
+      if (isInvestmentQuery && isConsultationMode) {
         const response = await fetch('http://localhost:8000/analyze_investments');
         if (response.ok) {
           const data = await response.json();
@@ -237,9 +300,9 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
       };
       setMessages(prev => [...prev, confirmationMessage]);
       
-      // Trigger investment analysis after budget approval
-      if (onInvestmentAnalysis) {
-        onInvestmentAnalysis();
+      // Trigger investment analysis after budget approval (only during consultation)
+      if (isConsultationMode) {
+        handleInvestmentAnalysis();
       }
     } else if (action === 'deny') {
       console.log('Budget denied');
@@ -251,9 +314,9 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
       };
       setMessages(prev => [...prev, denialMessage]);
       
-      // Trigger investment analysis after budget denial as well
-      if (onInvestmentAnalysis) {
-        onInvestmentAnalysis();
+      // Trigger investment analysis after budget denial (only during consultation)
+      if (isConsultationMode) {
+        handleInvestmentAnalysis();
       }
     }
     
@@ -262,6 +325,11 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
   };
 
   const handleQuickAction = async (action) => {
+    // Don't process quick actions during consultation - they should be handled by the consultation flow
+    // if (isConsultationMode) {
+    //   return;
+    // }
+    
     const actionConfig = {
       budget: {
         message: 'Analyze my budget',
@@ -348,6 +416,8 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
       // Stop investment analysis loading when chat finishes typing
       if (action === 'investments' && setIsInvestmentAnalysisLoading) {
         setIsInvestmentAnalysisLoading(false);
+        // Move to next step when analysis completes
+        handleInvestmentAnalysisCompleted();
       }
     } catch (error) {
       console.error(`Error analyzing ${action}:`, error);
@@ -367,6 +437,7 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
       setIsTyping(false);
     }
   };
+
 
   return (
     <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-2xl flex flex-col h-full relative z-50">

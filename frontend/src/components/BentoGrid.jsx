@@ -4,8 +4,17 @@ import BudgetSpendingPanel from './BudgetSpendingPanel';
 import FloatingChat from './FloatingChat';
 import Networth from './Networth';
 import SavingsActivityPanel from './SavingsActivityPanel';
+import { useConsultation } from '../contexts/ConsultationContext';
 
-function BentoGrid({ consultationState, onBudgetApproved, onInvestmentAnalysisCompleted, onStocksClicked, setIsInvestmentAnalysisLoading }) {
+function BentoGrid() {
+  const {
+    consultationState,
+    isConsultationMode,
+    handleBudgetApproved,
+    handleInvestmentAnalysisCompleted,
+    handleStocksClicked,
+    setIsInvestmentAnalysisLoading
+  } = useConsultation();
   const [chatMessage, setChatMessage] = useState('');
   const [budgetData, setBudgetData] = useState(null);
 
@@ -13,17 +22,22 @@ function BentoGrid({ consultationState, onBudgetApproved, onInvestmentAnalysisCo
     setChatMessage(`Consult me on:\n${tip}`);
   };
 
-  const handleBudgetApproved = (newBudgetData) => {
+  const handleBudgetApprovedLocal = (newBudgetData) => {
     setBudgetData(newBudgetData);
-    if (onBudgetApproved) {
-      onBudgetApproved();
-    }
+    handleBudgetApproved();
   };
 
   // Trigger budget analysis when consultation starts
   useEffect(() => {
     if (consultationState.isActive && consultationState.currentStep === 'budget') {
       handleBudgetAnalysis();
+    }
+  }, [consultationState]);
+
+  // Trigger investment analysis when step changes to investment-analysis
+  useEffect(() => {
+    if (consultationState.isActive && consultationState.currentStep === 'investment-analysis') {
+      handleInvestmentAnalysis();
     }
   }, [consultationState]);
 
@@ -87,11 +101,7 @@ function BentoGrid({ consultationState, onBudgetApproved, onInvestmentAnalysisCo
         <FloatingChat 
           messageValue={chatMessage} 
           onMessageChange={setChatMessage} 
-          onBudgetApproved={handleBudgetApproved}
-          consultationState={consultationState}
-          onInvestmentAnalysis={handleInvestmentAnalysis}
-          onInvestmentAnalysisCompleted={onInvestmentAnalysisCompleted}
-          setIsInvestmentAnalysisLoading={setIsInvestmentAnalysisLoading}
+          onBudgetApproved={handleBudgetApprovedLocal}
         />
       </div>
     </div>

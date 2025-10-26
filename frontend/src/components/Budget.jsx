@@ -16,7 +16,7 @@ export default function Budget({
         <div className="flex-1 overflow-y-auto p-3">
             <div className="flex gap-6 h-full">
                 <div className="flex-shrink-0 flex flex-col items-center justify-center">
-                    <div className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2">{currentMonth} 2024</div>
+                    <div className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2">{currentMonth} 2025</div>
                     <div className="relative w-48 h-24">
                         <svg className="w-48 h-26" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet">
                             <path
@@ -46,7 +46,7 @@ export default function Budget({
                                 strokeLinecap="round"
                             />
                         </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center pt-6">
                             <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
                                 {Math.round(progressPercentage)}%
                             </div>

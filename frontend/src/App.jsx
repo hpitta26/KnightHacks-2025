@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Dashboard from './pages/Dashboard'
 import Login from './pages/LoginSignup'
 import Navbar from './components/Navbar'
+import { ConsultationProvider } from './contexts/ConsultationContext'
 
 // Protected Route component
 function ProtectedRoute({ children, isLoggedIn }) {
@@ -40,28 +41,30 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        <Route 
-          path='/' 
-          element={
-            <ProtectedRoute isLoggedIn={isLoggedIn}>
-              <Dashboard isDark={isDark} setIsDark={setIsDark} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path='/login' 
-          element={
-            !isLoggedIn ? (
-              <Login setIsLoggedIn={setIsLoggedIn} />
-            ) : (
-              <Navigate to="/" replace />
-            )
-          } 
-        />
-      </Routes>
-    </Router>
+    <ConsultationProvider>
+      <Router>
+        <Routes>
+          <Route 
+            path='/' 
+            element={
+              <ProtectedRoute isLoggedIn={isLoggedIn}>
+                <Dashboard isDark={isDark} setIsDark={setIsDark} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path='/login' 
+            element={
+              !isLoggedIn ? (
+                <Login setIsLoggedIn={setIsLoggedIn} />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+        </Routes>
+      </Router>
+    </ConsultationProvider>
   )
 }
 

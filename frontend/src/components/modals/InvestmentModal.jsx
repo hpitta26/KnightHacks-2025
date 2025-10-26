@@ -1,6 +1,8 @@
 import { HiX } from 'react-icons/hi';
+import { useConsultation } from '../../contexts/ConsultationContext';
 
-function InvestmentModal({ isOpen, onClose, selectedAccount, consultationState, onStocksClicked }) {
+function InvestmentModal({ isOpen, onClose, selectedAccount }) {
+  const { isConsultationMode, consultationState, handleStocksClicked } = useConsultation();
 
   const accounts = {
     '401k': {
@@ -235,10 +237,10 @@ function InvestmentModal({ isOpen, onClose, selectedAccount, consultationState, 
               {account.holdings.map((holding) => (
                 <div 
                   key={holding.id} 
-                  className={`p-4 bg-gray-50 dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-[#38393c] ${consultationState?.highlightStocks ? 'consultation-highlight rounded-lg' : ''}`}
+                  className={`p-4 bg-gray-50 dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-[#38393c] ${isConsultationMode && consultationState?.highlightStocks ? 'consultation-highlight rounded-lg' : ''}`}
                   onClick={() => {
-                    if (consultationState?.highlightStocks && onStocksClicked) {
-                      onStocksClicked();
+                    if (isConsultationMode && consultationState?.highlightStocks) {
+                      handleStocksClicked();
                     }
                   }}
                   style={{ cursor: consultationState?.highlightStocks ? 'pointer' : 'default' }}

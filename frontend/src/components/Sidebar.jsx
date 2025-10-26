@@ -5,8 +5,18 @@ import CashModal from './modals/CashModal';
 import InvestmentModal from './modals/InvestmentModal';
 import CreditModal from './modals/CreditModal';
 import LoanModal from './modals/LoanModal';
+import { useConsultation } from '../contexts/ConsultationContext';
 
-function Sidebar({ consultationState, onInvestmentPanelClick, onAmeritradeClick, onStocksClicked, onInvestmentAnalysisCompleted, isInvestmentTabOpen, investmentAnalysisComplete }) {
+function Sidebar() {
+  const {
+    isConsultationMode,
+    consultationState,
+    isInvestmentTabOpen,
+    investmentAnalysisComplete,
+    handleInvestmentPanelClicked,
+    handleAmeritradeClicked,
+    handleStocksClicked
+  } = useConsultation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isCashOpen, setIsCashOpen] = useState(false);
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
@@ -279,16 +289,13 @@ function Sidebar({ consultationState, onInvestmentPanelClick, onAmeritradeClick,
 
         {/* Investments Section */}
         <div className={`p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3 ${
-          consultationState?.highlightInvestmentPanel ? 'consultation-highlight rounded-xl' : ''
+          isConsultationMode && consultationState?.highlightInvestmentPanel ? 'consultation-highlight rounded-xl' : ''
         }`}>
           <button
             onClick={() => {
               setIsInvestmentsOpen(!isInvestmentsOpen);
-              if (consultationState?.highlightInvestmentPanel && onInvestmentPanelClick) {
-                onInvestmentPanelClick();
-              }
-              if (consultationState?.isActive && consultationState?.currentStep === 'investment-analysis' && onInvestmentAnalysisCompleted && !consultationState?.isInvestmentAnalysisLoading) {
-                onInvestmentAnalysisCompleted();
+              if (isConsultationMode && consultationState?.highlightInvestmentPanel) {
+                handleInvestmentPanelClicked();
               }
             }}
             className="w-full flex items-center justify-between text-left"
@@ -344,11 +351,11 @@ function Sidebar({ consultationState, onInvestmentPanelClick, onAmeritradeClick,
                 onClick={() => {
                   setSelectedInvestmentAccount('ameritrade');
                   setIsInvestmentModalOpen(true);
-                  if (consultationState?.highlightAmeritrade && onAmeritradeClick) {
-                    onAmeritradeClick();
+                  if (isConsultationMode && consultationState?.highlightAmeritrade) {
+                    handleAmeritradeClicked();
                   }
                 }}
-                className={`w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left ${consultationState?.highlightAmeritrade ? 'consultation-highlight rounded-lg' : ''}`}
+                className={`w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left ${isConsultationMode && consultationState?.highlightAmeritrade ? 'consultation-highlight rounded-lg' : ''}`}
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -658,8 +665,6 @@ function Sidebar({ consultationState, onInvestmentPanelClick, onAmeritradeClick,
         isOpen={isInvestmentModalOpen} 
         onClose={() => setIsInvestmentModalOpen(false)}
         selectedAccount={selectedInvestmentAccount}
-        consultationState={consultationState}
-        onStocksClicked={onStocksClicked}
       />
 
       {/* Credit Modal */}
