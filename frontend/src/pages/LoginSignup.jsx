@@ -8,7 +8,14 @@ export default function Login() {
     <div className="min-h-screen grid place-items-center bg-white dark:bg-[#141414] p-6">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-[#28ce78]">Welcome</h1>
+          <div className="flex items-center justify-center mb-2 gap-2">
+            <img 
+              src="/noun-globalization-7433299.svg" 
+              alt="FinTerra Logo" 
+              className="w-8 h-8 brightness-0 opacity-70 dark:brightness-0 dark:invert dark:opacity-80"
+            />
+            <h1 className="text-3xl font-bold tracking-tight text-[#28ce78]">FinTerra</h1>
+          </div>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{tab === "login" ? "Sign in to your account" : "Create your account"}</p>
         </div>
 
