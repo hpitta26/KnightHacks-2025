@@ -102,8 +102,8 @@ export default function Budget({
                                 }`}>
                                     <div className="flex items-center gap-2">
                                         {isOverBudget && (
-                                            <div className="p-1 bg-red-500 rounded-full">
-                                                <IoMdWarning className="w-3 h-3 text-white" />
+                                            <div className="p-1 bg-red-500 rounded-full flex">
+                                                <IoMdWarning className="w-3 h-3 text-white pb-0.5" />
                                             </div>
                                         )}
                                         {isCompleted && !isOverBudget && (
