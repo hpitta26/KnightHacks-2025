@@ -3,7 +3,7 @@ import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 import ProfileModal from './modals/ProfileModal';
 
-function Navbar({ isDark, setIsDark }) {
+function Navbar({ isDark, setIsDark, setIsLoggedIn }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
@@ -54,7 +54,8 @@ function Navbar({ isDark, setIsDark }) {
               </button>
               <ProfileModal 
                 isOpen={isProfileOpen} 
-                onClose={() => setIsProfileOpen(false)} 
+                onClose={() => setIsProfileOpen(false)}
+                setIsLoggedIn={setIsLoggedIn}
               />
             </div>
           </div>

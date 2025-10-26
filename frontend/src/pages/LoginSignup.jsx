@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({ setIsLoggedIn }) {
   const [tab, setTab] = useState("login");
 
   return (
@@ -46,7 +46,7 @@ export default function Login() {
         </div>
 
         <div className="mt-4">
-          {tab === "login" ? <LoginForm /> : <SignupForm switchToLogin={() => setTab("login")} />}
+          {tab === "login" ? <LoginForm setIsLoggedIn={setIsLoggedIn} /> : <SignupForm switchToLogin={() => setTab("login")} />}
         </div>
 
         <p className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
@@ -57,7 +57,7 @@ export default function Login() {
   );
 }
 
-function LoginForm() {
+function LoginForm({ setIsLoggedIn }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -74,6 +74,11 @@ function LoginForm() {
     if (email === "johndoe@example.com" && password === "dev1234567") {
       setLoading(true);
       await new Promise((res) => setTimeout(res, 500));
+      
+      // Set authentication state
+      setIsLoggedIn(true);
+      localStorage.setItem("isLoggedIn", "true");
+      
       navigate("/");
     } else {
       setErrors("Invalid email or password.");

@@ -1,14 +1,24 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard'
 import Login from './pages/LoginSignup'
 import Navbar from './components/Navbar'
+
+// Protected Route component
+function ProtectedRoute({ children, isLoggedIn }) {
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
 
 function App() {
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
     return savedTheme === "dark";
   });
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -21,11 +31,35 @@ function App() {
     }
   }, [isDark]);
 
+  // Check if user is logged in on mount
+  useEffect(() => {
+    const savedAuth = localStorage.getItem("isLoggedIn");
+    if (savedAuth === "true") {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Dashboard isDark={isDark} setIsDark={setIsDark} />} />
-        <Route path='/login' element={<Login />} />
+        <Route 
+          path='/' 
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Dashboard isDark={isDark} setIsDark={setIsDark} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path='/login' 
+          element={
+            !isLoggedIn ? (
+              <Login setIsLoggedIn={setIsLoggedIn} />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } 
+        />
       </Routes>
     </Router>
   )

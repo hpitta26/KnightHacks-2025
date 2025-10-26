@@ -2,10 +2,11 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import BentoGrid from '../components/BentoGrid';
 
-function Dashboard({isDark, setIsDark}) {
+function Dashboard({isDark, setIsDark, isLoggedIn, setIsLoggedIn}) {
+  
   return (
     <div className="h-screen flex flex-col bg-white dark:bg-[#141414]">
-        <Navbar isDark={isDark} setIsDark={setIsDark} />
+        <Navbar isDark={isDark} setIsDark={setIsDark} setIsLoggedIn={setIsLoggedIn} />
         <div className="flex flex-1 overflow-hidden">
             <Sidebar />
             <main className="flex-1 overflow-auto bg-gray-50 dark:bg-[#0a0a0a]">

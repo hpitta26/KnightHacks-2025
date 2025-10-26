@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { FiLogOut } from 'react-icons/fi';
 
-function ProfileModal({ isOpen, onClose }) {
+function ProfileModal({ isOpen, onClose, setIsLoggedIn }) {
   const navigate = useNavigate();
   const modalRef = useRef(null);
 
@@ -24,7 +24,11 @@ function ProfileModal({ isOpen, onClose }) {
   }, [isOpen, onClose]);
 
   const handleLogout = () => {
-    // TODO: Add actual logout logic (clear tokens, etc.)
+    // Clear authentication state
+    setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn');
+    
+    // Navigate to login page
     navigate('/login');
     onClose();
   };
