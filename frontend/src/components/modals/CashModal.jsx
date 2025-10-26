@@ -153,8 +153,14 @@ function CashModal({ isOpen, onClose, selectedAccount }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-xl max-w-lg w-full max-h-[75vh] flex flex-col">
+    <div 
+      className="fixed inset-0 bg-black/75 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-xl max-w-lg w-full max-h-[75vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-[#38393c]">
           <div>
