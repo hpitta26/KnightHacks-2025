@@ -1,0 +1,40 @@
+name: Deploy (self-hosted)
+
+on:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted]
+    steps:
+      - name: Checkout to fixed path
+        uses: actions/checkout@v4
+        with:
+          path: /opt/finterras
+
+      - name: Prepare Python backend (clean install)
+        working-directory: /opt/finterras/backend
+        run: |
+          set -euo pipefail
+
+          # Wipe venv
+          rm -rf venv
+
+      - name: Prepare frontend (clean install)
+        working-directory: /opt/finterras/frontend
+        run: |
+          set -euo pipefail
+
+          # Use npm ci for reproducible clean install
+          rm -rf node_modules
+
+      - name: Restart services
+        run: |
+          set -euo pipefail
+          sudo systemctl restart backend.service
+          sudo systemctl restart frontend.service
