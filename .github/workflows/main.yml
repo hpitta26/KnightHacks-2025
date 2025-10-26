@@ -35,5 +35,3 @@ jobs:
           set -euo pipefail
           sudo systemctl restart backend.service
           sudo systemctl restart frontend.service
-
-
