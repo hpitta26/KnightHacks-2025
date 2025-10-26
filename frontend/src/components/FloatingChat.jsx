@@ -80,11 +80,9 @@ function FloatingChat() {
     adjustTextareaHeight();
   }, [inputValue]);
 
-  const suggestedQuestions = [
-    "What's my net worth?",
-    "Analyze my spending",
-    "Investment suggestions",
-    "Budget recommendations"
+  const suggestedActions = [
+    "investments",
+    "budget",
   ];
 
   return (
@@ -96,7 +94,7 @@ function FloatingChat() {
             <HiSparkles className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-gray-900 dark:text-white">Financial Advisor</h2>
+            <h2 className="text-sm font-bold text-gray-900 dark:text-white">Elowen</h2>
           </div>
         </div>
       </div>
@@ -145,15 +143,15 @@ function FloatingChat() {
       {/* Suggested Questions */}
       {messages.length === 1 && (
         <div className="px-3 pb-2">
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Quick questions:</p>
-          <div className="space-y-1">
-            {suggestedQuestions.slice(0, 2).map((question, index) => (
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Quick actions - Analyze:</p>
+          <div className="space-x-1 flex">
+            {suggestedActions.slice(0, 2).map((action, index) => (
               <button
                 key={index}
-                onClick={() => setInputValue(question)}
-                className="w-full text-left text-xs p-2 rounded-lg bg-gray-50 dark:bg-[#141414] hover:bg-gray-100 dark:hover:bg-[#1f1f1f] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#38393c] transition-colors"
+                onClick={() => setInputValue(action)}
+                className="text-center text-xs px-2 py-1 rounded-lg bg-gray-50 dark:bg-[#141414] hover:bg-gray-100 dark:hover:bg-[#1f1f1f] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#38393c] transition-colors"
               >
-                {question}
+                {action}
               </button>
             ))}
           </div>
