@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { HiChevronDown, HiChevronRight } from 'react-icons/hi';
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
+import CashModal from './modals/CashModal';
 
 function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -8,6 +9,8 @@ function Sidebar() {
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
   const [isCreditOpen, setIsCreditOpen] = useState(false);
   const [isLoansOpen, setIsLoansOpen] = useState(false);
+  const [isCashModalOpen, setIsCashModalOpen] = useState(false);
+  const [selectedCashAccount, setSelectedCashAccount] = useState(null);
 
   if (isCollapsed) {
     return (
@@ -165,18 +168,23 @@ function Sidebar() {
               </h3>
              
             </div>
-              <p className="text-lg font-medium text-gray-900 dark:text-white mt-1">
-                $24,205
-              </p>
-            
+            <p className="text-lg font-medium text-gray-900 dark:text-white mt-1">
+              $24,205
+            </p>
           </button>
 
           {isCashOpen && (
             <div className="space-y-2">
-              {/* Bank Accounts */}
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              {/* Bank of America Checking */}
+              <button
+                onClick={() => {
+                  setSelectedCashAccount('boa-checking');
+                  setIsCashModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
-                  <div>
+                  <div className="text-left">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
                       Bank of America
                     </p>
@@ -193,11 +201,18 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              {/* Bank of America Savings */}
+              <button
+                onClick={() => {
+                  setSelectedCashAccount('boa-savings');
+                  setIsCashModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
-                  <div>
+                  <div className="text-left">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
                       Bank of America
                     </p>
@@ -214,11 +229,18 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              {/* Chase Checking */}
+              <button
+                onClick={() => {
+                  setSelectedCashAccount('chase-checking');
+                  setIsCashModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
-                  <div>
+                  <div className="text-left">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
                       Chase
                     </p>
@@ -235,7 +257,7 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
           )}
         </div>
@@ -535,6 +557,13 @@ function Sidebar() {
           )}
         </div>
       </div>
+
+      {/* Cash Modal */}
+      <CashModal 
+        isOpen={isCashModalOpen} 
+        onClose={() => setIsCashModalOpen(false)}
+        selectedAccount={selectedCashAccount}
+      />
     </aside>
   );
 }
