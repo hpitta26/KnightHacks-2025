@@ -3,7 +3,7 @@ import { HiSparkles } from 'react-icons/hi';
 import { FaCircleArrowUp } from 'react-icons/fa6';
 import { HiMiniPencilSquare } from "react-icons/hi2";
 
-function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, consultationState, onInvestmentAnalysis, onInvestmentAnalysisCompleted }) {
+function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, consultationState, onInvestmentAnalysis, onInvestmentAnalysisCompleted, setIsInvestmentAnalysisLoading }) {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -22,6 +22,7 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
   // Sync with external messageValue and auto-send
   useEffect(() => {
     if (messageValue && messageValue !== inputValue) {
+      // Handle special consultation constants first
       if (messageValue === 'CONSULTATION_BUDGET_ANALYSIS') {
         handleQuickAction('budget');
         setInputValue('');
@@ -34,75 +35,64 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
         if (onMessageChange) {
           onMessageChange('');
         }
+      } else if (messageValue.includes('Consult me on')) {
+        // Handle regular consultation messages
+        const sendAutoMessage = async () => {
+          const newUserMessage = {
+            id: Date.now(),
+            role: 'user',
+            content: messageValue,
+            timestamp: new Date()
+          };
+
+          setMessages(prev => [...prev, newUserMessage]);
+          setIsTyping(true);
+
+          // Call the backend endpoint
+          try {
+            const response = await fetch('http://localhost:8000/consultation', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ tip_description: messageValue })
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              const aiResponse = {
+                id: Date.now() + 1,
+                role: 'assistant',
+                content: data.reply,
+                timestamp: new Date()
+              };
+              setMessages(prev => [...prev, aiResponse]);
+            } else {
+              throw new Error('Failed to get consultation');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            const errorResponse = {
+              id: Date.now() + 1,
+              role: 'assistant',
+              content: 'Sorry, I encountered an error. Please try again.',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorResponse]);
+          } finally {
+            setIsTyping(false);
+            if (onMessageChange) {
+              onMessageChange('');
+            }
+          }
+        };
+
+        sendAutoMessage();
       } else {
+        // Handle regular user input
         setInputValue(messageValue);
       }
     }
-
-    const sendAutoMessage = async () => {
-      const newUserMessage = {
-        id: Date.now(),
-        role: 'user',
-        content: messageValue,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, newUserMessage]);
-      setIsTyping(true);
-
-      // Call the backend endpoint
-      try {
-        // Check if it's a consultation query
-        if (messageValue.includes('Consult me on')) {
-          const response = await fetch('http://localhost:8000/consultation', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ tip_description: messageValue })
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            const aiResponse = {
-              id: Date.now() + 1,
-              role: 'assistant',
-              content: data.reply,
-              timestamp: new Date()
-            };
-            setMessages(prev => [...prev, aiResponse]);
-          } else {
-            throw new Error('Failed to get consultation');
-          }
-        } else {
-          // For other queries, show a placeholder response
-          const aiResponse = {
-            id: Date.now() + 1,
-            role: 'assistant',
-            content: 'I can help you with investment analysis. Try asking about your portfolio or type "investments" to get started.',
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, aiResponse]);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        const errorResponse = {
-          id: Date.now() + 1,
-          role: 'assistant',
-          content: 'Sorry, I encountered an error. Please try again.',
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, errorResponse]);
-      } finally {
-        setIsTyping(false);
-        if (onMessageChange) {
-          onMessageChange('');
-        }
-      }
-    };
-
-    sendAutoMessage();
-
   }, [messageValue]);
 
   const scrollToBottom = () => {
@@ -305,9 +295,7 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
         headers: {},
         processResponse: (data) => data.reply,
         onSuccess: () => {
-          if (consultationState?.isActive && onInvestmentAnalysisCompleted) {
-            onInvestmentAnalysisCompleted();
-          }
+          // Don't stop loading here - let the chat finish loading the response
         }
       }
     };
@@ -356,6 +344,11 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
       setMessages(prev => [...prev, aiResponse]);
       
       config.onSuccess(data);
+      
+      // Stop investment analysis loading when chat finishes typing
+      if (action === 'investments' && setIsInvestmentAnalysisLoading) {
+        setIsInvestmentAnalysisLoading(false);
+      }
     } catch (error) {
       console.error(`Error analyzing ${action}:`, error);
       const errorResponse = {
@@ -365,6 +358,11 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, co
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorResponse]);
+      
+      // Stop loading on error
+      if (action === 'investments' && setIsInvestmentAnalysisLoading) {
+        setIsInvestmentAnalysisLoading(false);
+      }
     } finally {
       setIsTyping(false);
     }

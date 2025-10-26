@@ -5,7 +5,7 @@ import FloatingChat from './FloatingChat';
 import Networth from './Networth';
 import SavingsActivityPanel from './SavingsActivityPanel';
 
-function BentoGrid({ consultationState, onBudgetApproved, onInvestmentAnalysisCompleted, onStocksClicked }) {
+function BentoGrid({ consultationState, onBudgetApproved, onInvestmentAnalysisCompleted, onStocksClicked, setIsInvestmentAnalysisLoading }) {
   const [chatMessage, setChatMessage] = useState('');
   const [budgetData, setBudgetData] = useState(null);
 
@@ -65,6 +65,7 @@ function BentoGrid({ consultationState, onBudgetApproved, onInvestmentAnalysisCo
   };
 
   const handleInvestmentAnalysis = () => {
+    setIsInvestmentAnalysisLoading(true);
     setChatMessage('CONSULTATION_INVESTMENT_ANALYSIS');
   };
 
@@ -90,6 +91,7 @@ function BentoGrid({ consultationState, onBudgetApproved, onInvestmentAnalysisCo
           consultationState={consultationState}
           onInvestmentAnalysis={handleInvestmentAnalysis}
           onInvestmentAnalysisCompleted={onInvestmentAnalysisCompleted}
+          setIsInvestmentAnalysisLoading={setIsInvestmentAnalysisLoading}
         />
       </div>
     </div>
