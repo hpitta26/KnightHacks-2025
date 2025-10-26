@@ -13,7 +13,7 @@ export default function Budget({
     sortedBudgetTargets 
 }) {
     return (
-        <div className="flex-1 overflow-y-auto p-3 pb-12">
+        <div className="flex-1 overflow-y-auto p-3">
             <div className="flex gap-6 h-full">
                 <div className="flex-shrink-0 flex flex-col items-center justify-center">
                     <div className="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2">{currentMonth} 2024</div>
@@ -83,7 +83,7 @@ export default function Budget({
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-2 overflow-y-auto rounded-lg bg-gray-50 dark:bg-[#1a1a1a]" style={{
+                    <div className="space-y-2 overflow-y-auto rounded-lg bg-gray-50 dark:bg-[#1a1a1a] mb-8" style={{
                         scrollbarWidth: 'auto',
                         scrollbarColor: '#6b7280 #e5e7eb'
                     }}>
