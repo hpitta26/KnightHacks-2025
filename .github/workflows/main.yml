@@ -18,7 +18,7 @@ jobs:
       - name: Sync repo to /opt/finterras (keep backend/.env)
         run: |
           set -euo pipefail
-          sudo rsync -a --delete \
+          sudo rsync -a --delete-after \
             --chown=gh-runner:gh-runner \
             --exclude '.git' \
             --exclude 'backend/.env' \
