@@ -7,7 +7,7 @@ function FloatingChat({ messageValue = '', onMessageChange }) {
     {
       id: 1,
       role: 'assistant',
-      content: 'Hi! I\'m your financial advisor. How can I help you today?',
+      content: 'Hi! I\'m Elowen, your financial advisor. How can I help you today?',
       timestamp: new Date()
     }
   ]);
@@ -31,7 +31,7 @@ function FloatingChat({ messageValue = '', onMessageChange }) {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     if (e) e.preventDefault();
     if (!inputValue.trim()) return;
 
@@ -43,6 +43,7 @@ function FloatingChat({ messageValue = '', onMessageChange }) {
     };
 
     setMessages(prev => [...prev, newUserMessage]);
+    const currentInput = inputValue;
     setInputValue('');
     if (onMessageChange) {
       onMessageChange('');
@@ -54,17 +55,49 @@ function FloatingChat({ messageValue = '', onMessageChange }) {
       inputRef.current.style.height = 'auto';
     }
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse = {
+    // Call the backend endpoint
+    try {
+      // Check if it's an investment-related query
+      const isInvestmentQuery = currentInput.toLowerCase().includes('investment') || 
+                                currentInput.toLowerCase().includes('portfolio') ||
+                                currentInput.toLowerCase().trim() === 'investments';
+
+      if (isInvestmentQuery) {
+        const response = await fetch('http://localhost:8000/analyze_investments');
+        if (response.ok) {
+          const data = await response.json();
+          const aiResponse = {
+            id: Date.now() + 1,
+            role: 'assistant',
+            content: data.reply,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiResponse]);
+        } else {
+          throw new Error('Failed to analyze investments');
+        }
+      } else {
+        // For other queries, show a placeholder response
+        const aiResponse = {
+          id: Date.now() + 1,
+          role: 'assistant',
+          content: 'I can help you with investment analysis. Try asking about your portfolio or type "investments" to get started.',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiResponse]);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      const errorResponse = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: 'I\'m currently in demo mode. In production, I would analyze your portfolio and provide personalized financial advice based on your query.',
+        content: 'Sorry, I encountered an error. Please try again.',
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -126,7 +159,29 @@ function FloatingChat({ messageValue = '', onMessageChange }) {
                   : 'bg-gray-100 dark:bg-[#141414] text-gray-900 dark:text-white border border-gray-200 dark:border-[#38393c]'
               }`}
             >
-              <p className="leading-relaxed">{message.content}</p>
+              {message.role === 'assistant' ? (
+                <div className="leading-relaxed whitespace-pre-line">
+                  {message.content.split('\n').map((line, i) => {
+                    // Check if line contains bold markdown
+                    if (line.includes('**')) {
+                      const parts = line.split(/(\*\*.*?\*\*)/);
+                      return (
+                        <span key={i}>
+                          {parts.map((part, j) => {
+                            if (part.startsWith('**') && part.endsWith('**')) {
+                              return <strong key={j}>{part.slice(2, -2)}</strong>;
+                            }
+                            return <span key={j}>{part}</span>;
+                          })}
+                        </span>
+                      );
+                    }
+                    return <span key={i}>{line}{'\n'}</span>;
+                  })}
+                </div>
+              ) : (
+                <p className="leading-relaxed">{message.content}</p>
+              )}
               <p className={`text-xs mt-1 ${
                 message.role === 'user' 
                   ? 'text-white/70' 
@@ -161,7 +216,48 @@ function FloatingChat({ messageValue = '', onMessageChange }) {
             {suggestedActions.slice(0, 2).map((action, index) => (
               <button
                 key={index}
-                onClick={() => setInputValue(action)}
+                onClick={() => {
+                  // Create user message and send investment query directly
+                  const messageText = action === 'investments' ? 'Analyze my investments' : 'Analyze my budget';
+                  const newUserMessage = {
+                    id: Date.now(),
+                    role: 'user',
+                    content: messageText,
+                    timestamp: new Date()
+                  };
+                  setMessages(prev => [...prev, newUserMessage]);
+                  setIsTyping(true);
+
+                  // Call the backend endpoint based on the action
+                  const endpoint = action === 'investments' 
+                    ? 'http://localhost:8000/analyze_investments'
+                    : 'http://localhost:8000/analyze_budget';
+                  
+                  fetch(endpoint)
+                    .then(response => response.ok ? response.json() : Promise.reject())
+                    .then(data => {
+                      const aiResponse = {
+                        id: Date.now() + 1,
+                        role: 'assistant',
+                        content: data.reply,
+                        timestamp: new Date()
+                      };
+                      setMessages(prev => [...prev, aiResponse]);
+                    })
+                    .catch(error => {
+                      console.error('Error:', error);
+                      const errorResponse = {
+                        id: Date.now() + 1,
+                        role: 'assistant',
+                        content: 'Sorry, I encountered an error. Please try again.',
+                        timestamp: new Date()
+                      };
+                      setMessages(prev => [...prev, errorResponse]);
+                    })
+                    .finally(() => {
+                      setIsTyping(false);
+                    });
+                }}
                 className="text-center text-xs px-2 py-1 rounded-lg bg-gray-50 dark:bg-[#141414] hover:bg-gray-100 dark:hover:bg-[#1f1f1f] text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-[#38393c] transition-colors"
               >
                 {action}
