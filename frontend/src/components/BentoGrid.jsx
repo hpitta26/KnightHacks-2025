@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PersonalizedTips from './PersonalizedTips';
 import BudgetSpendingPanel from './BudgetSpendingPanel';
 import FloatingChat from './FloatingChat';
@@ -5,6 +6,11 @@ import Networth from './Networth';
 import SavingsActivityPanel from './SavingsActivityPanel';
 
 function BentoGrid() {
+  const [chatMessage, setChatMessage] = useState('');
+
+  const handleConsult = (tip) => {
+    setChatMessage(`Consult me on <tip>${tip}</tip>`);
+  };
 
   return (
     <div className="p-3.5 grid grid-cols-8 grid-rows-2 gap-3.5 h-full">
@@ -18,10 +24,10 @@ function BentoGrid() {
         <SavingsActivityPanel />
       </div>
       <div className="col-span-3 flex h-full flex-col overflow-hidden">
-        <PersonalizedTips />
+        <PersonalizedTips onConsult={handleConsult} />
       </div>
       <div className="col-span-2 flex h-full flex-col overflow-hidden">
-        <FloatingChat />
+        <FloatingChat messageValue={chatMessage} onMessageChange={setChatMessage} />
       </div>
     </div>
   );

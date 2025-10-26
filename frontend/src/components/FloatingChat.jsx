@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { HiSparkles } from 'react-icons/hi';
 import { FaCircleArrowUp } from 'react-icons/fa6';
 
-function FloatingChat() {
+function FloatingChat({ messageValue = '', onMessageChange }) {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -15,6 +15,13 @@ function FloatingChat() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Sync with external messageValue
+  useEffect(() => {
+    if (messageValue && messageValue !== inputValue) {
+      setInputValue(messageValue);
+    }
+  }, [messageValue]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,6 +44,9 @@ function FloatingChat() {
 
     setMessages(prev => [...prev, newUserMessage]);
     setInputValue('');
+    if (onMessageChange) {
+      onMessageChange('');
+    }
     setIsTyping(true);
 
     // Reset textarea height
@@ -73,6 +83,9 @@ function FloatingChat() {
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
+    if (onMessageChange) {
+      onMessageChange(e.target.value);
+    }
     setTimeout(adjustTextareaHeight, 0);
   };
 

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { HiLightBulb, HiInformationCircle, HiExclamation, HiCheckCircle, HiDotsVertical } from 'react-icons/hi';
 
-export default function PersonalizedTips() {
+export default function PersonalizedTips({ onConsult }) {
     const [openDropdown, setOpenDropdown] = useState(null);
     const dropdownRefs = useRef({});
 
@@ -17,8 +17,10 @@ export default function PersonalizedTips() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [openDropdown]);
 
-    const handleAction = (tipId, action) => {
-        console.log(`${action} clicked for tip ${tipId}`);
+    const handleAction = (tip, action) => {
+        if (action === 'consult' && onConsult) {
+            onConsult(tip.description);
+        }
         setOpenDropdown(null);
     };
 
@@ -178,13 +180,13 @@ export default function PersonalizedTips() {
                                 {openDropdown === tip.id && (
                                     <div className="absolute right-0 top-7 z-10 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-lg shadow-lg min-w-[120px]">
                                         <button
-                                            onClick={() => handleAction(tip.id, 'consult')}
+                                            onClick={() => handleAction(tip, 'consult')}
                                             className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#262626] rounded-t-lg transition-colors"
                                         >
                                             Consult
                                         </button>
                                         <button
-                                            onClick={() => handleAction(tip.id, 'dismiss')}
+                                            onClick={() => handleAction(tip, 'dismiss')}
                                             className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#262626] rounded-b-lg transition-colors"
                                         >
                                             Dismiss
