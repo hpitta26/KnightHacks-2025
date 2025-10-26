@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { HiSparkles } from 'react-icons/hi';
 import { FaCircleArrowUp } from 'react-icons/fa6';
+import { HiMiniPencilSquare } from "react-icons/hi2";
 
 function FloatingChat({ messageValue = '', onMessageChange }) {
   const [messages, setMessages] = useState([
@@ -134,7 +135,7 @@ function FloatingChat({ messageValue = '', onMessageChange }) {
   return (
     <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-2xl flex flex-col h-full">
       {/* Header */}
-      <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c]">
+      <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c] flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 bg-gradient-to-br from-[#28ce78] to-[#1ea560] rounded-lg flex items-center justify-center">
             <HiSparkles className="w-4 h-4 text-white" />
@@ -142,6 +143,27 @@ function FloatingChat({ messageValue = '', onMessageChange }) {
           <div>
             <h2 className="text-sm font-bold text-gray-900 dark:text-white">Elowen</h2>
           </div>
+        </div>
+        <div className="relative group">
+          <button
+            onClick={() => {
+              setMessages([
+                {
+                  id: 1,
+                  role: 'assistant',
+                  content: 'Hi! I\'m Elowen, your financial advisor. How can I help you today?',
+                  timestamp: new Date()
+                }
+              ]);
+              setInputValue('');
+            }}
+            className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+          >
+            <HiMiniPencilSquare className="w-4 h-4 text-gray-500 dark:text-gray-400 cursor-pointer" />
+          </button>
+          <span className="absolute right-0 top-full mt-1 px-2 py-1 text-xs text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-sm">
+            Clear chat
+          </span>
         </div>
       </div>
 
