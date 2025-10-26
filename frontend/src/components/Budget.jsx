@@ -46,7 +46,7 @@ export default function Budget({
                                 strokeLinecap="round"
                             />
                         </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center pt-6">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center pt-4">
                             <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
                                 {Math.round(progressPercentage)}%
                             </div>
