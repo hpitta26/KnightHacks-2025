@@ -9,7 +9,7 @@ export default function BudgetSpendingPanel({ budgetData, consultationState }) {
     const [loading, setLoading] = useState(true);
     const totalPages = 2;
     
-    const currentMonth = "December";
+    const currentMonth = "October";
     
     // Calculate totals from fetched data
     const currentSpent = budgetTargets.reduce((sum, item) => sum + item.spent, 0);
