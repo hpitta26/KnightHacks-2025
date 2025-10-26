@@ -3,7 +3,7 @@ import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 import ProfileModal from './modals/ProfileModal';
 
-function Navbar({ isDark, setIsDark, setIsLoggedIn }) {
+function Navbar({ isDark, setIsDark, setIsLoggedIn, onStartConsultation }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
@@ -22,6 +22,7 @@ function Navbar({ isDark, setIsDark, setIsLoggedIn }) {
           </div>
           <div className="flex items-center space-x-8">
             <button
+              onClick={onStartConsultation}
               className="p-2 rounded-lg transition text-gray-700 hover:text-[#28ce78] dark:text-gray-200 dark:hover:text-[#28ce78] cursor-pointer"
             >
               Monthly Consultation

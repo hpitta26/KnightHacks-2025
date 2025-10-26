@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { HiChevronDown, HiChevronRight } from 'react-icons/hi';
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
 import CashModal from './modals/CashModal';
@@ -6,7 +6,7 @@ import InvestmentModal from './modals/InvestmentModal';
 import CreditModal from './modals/CreditModal';
 import LoanModal from './modals/LoanModal';
 
-function Sidebar() {
+function Sidebar({ consultationState, onInvestmentPanelClick, onAmeritradeClick, onStocksClicked }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isCashOpen, setIsCashOpen] = useState(false);
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
@@ -20,6 +20,12 @@ function Sidebar() {
   const [selectedCreditAccount, setSelectedCreditAccount] = useState(null);
   const [isLoanModalOpen, setIsLoanModalOpen] = useState(false);
   const [selectedLoanAccount, setSelectedLoanAccount] = useState(null);
+
+  useEffect(() => {
+    if (consultationState?.highlightInvestmentPanel) {
+      setIsInvestmentsOpen(false);
+    }
+  }, [consultationState?.highlightInvestmentPanel]);
 
   if (isCollapsed) {
     return (
@@ -272,9 +278,14 @@ function Sidebar() {
         </div>
 
         {/* Investments Section */}
-        <div className="p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3">
+        <div className={`p-3 rounded-xl bg-gray-100 dark:bg-[#1a1a1a] space-y-3 ${consultationState?.highlightInvestmentPanel ? 'consultation-highlight rounded-xl' : ''}`}>
           <button
-            onClick={() => setIsInvestmentsOpen(!isInvestmentsOpen)}
+            onClick={() => {
+              setIsInvestmentsOpen(!isInvestmentsOpen);
+              if (consultationState?.highlightInvestmentPanel && onInvestmentPanelClick) {
+                onInvestmentPanelClick();
+              }
+            }}
             className="w-full flex items-center justify-between text-left"
           >
             <div className="flex items-center gap-1">
@@ -328,8 +339,11 @@ function Sidebar() {
                 onClick={() => {
                   setSelectedInvestmentAccount('ameritrade');
                   setIsInvestmentModalOpen(true);
+                  if (consultationState?.highlightAmeritrade && onAmeritradeClick) {
+                    onAmeritradeClick();
+                  }
                 }}
-                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+                className={`w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left ${consultationState?.highlightAmeritrade ? 'consultation-highlight rounded-lg' : ''}`}
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -639,6 +653,8 @@ function Sidebar() {
         isOpen={isInvestmentModalOpen} 
         onClose={() => setIsInvestmentModalOpen(false)}
         selectedAccount={selectedInvestmentAccount}
+        consultationState={consultationState}
+        onStocksClicked={onStocksClicked}
       />
 
       {/* Credit Modal */}

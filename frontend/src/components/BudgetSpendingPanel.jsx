@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Budget from './Budget';
 import Spending from './Spending';
 
-export default function BudgetSpendingPanel({ budgetData }) {
+export default function BudgetSpendingPanel({ budgetData, consultationState }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [budgetTargets, setBudgetTargets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -49,6 +49,12 @@ export default function BudgetSpendingPanel({ budgetData }) {
             setBudgetTargets(budgetData);
         }
     }, [budgetData]);
+
+    useEffect(() => {
+        if (consultationState?.highlightBudgetPanel) {
+            setCurrentPage(1);
+        }
+    }, [consultationState?.highlightBudgetPanel]);
 
     const sortedBudgetTargets = [...budgetTargets].sort((a, b) => {
         const aOverBudget = a.spent > a.amount;
@@ -125,7 +131,7 @@ export default function BudgetSpendingPanel({ budgetData }) {
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-2 p-2 bg-white/90 dark:bg-[#1a1a1a]/90 backdrop-blur-sm dark:border-[#38393c]">
                 <button 
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
+                    disabled={currentPage === 1 || consultationState?.isActive}
                     className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     <HiChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
@@ -137,7 +143,7 @@ export default function BudgetSpendingPanel({ budgetData }) {
                 
                 <button 
                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
+                    disabled={currentPage === totalPages || consultationState?.isActive}
                     className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     <HiChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />

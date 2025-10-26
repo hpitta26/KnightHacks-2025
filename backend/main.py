@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
-from agents.agents import investment_analyzer
+from agents.agents import investment_analyzer, budget_analyzer
 
 load_dotenv()
 
@@ -309,177 +309,186 @@ Provide specific insights and actionable recommendations based on the holdings s
 
 
 @app.post("/api/analyze_budget")
-def analyze_budget():
-    """Analyze budget data and provide AI-powered insights"""
+async def analyze_budget():
+    """Analyze budget data and provide AI-powered insights using the budget analyzer agent"""
+    # print("=" * 50)
+    # print("DEBUG: analyze_budget endpoint called")
+    # print("=" * 50)
+    
+    if not API_KEY:
+        # print("ERROR: GOOGLE_API_KEY is not set")
+        raise HTTPException(status_code=500, detail="GOOGLE_API_KEY is not set")
+
     try:
-        # Load all required data files
-        with open("data/activity.json", "r") as file:
-            activity_data = json.load(file)
-        
+        # print("DEBUG: Loading data files...")
         with open("data/budget.json", "r") as file:
             budget_data = json.load(file)
+        # print(f"DEBUG: Loaded budget data: {len(budget_data)} categories")
             
         with open("data/savings.json", "r") as file:
             savings_data = json.load(file)
+        # print(f"DEBUG: Loaded savings data: {savings_data}")
+            
+        with open("data/income.json", "r") as file:
+            past_year_income = json.load(file)
+        # print(f"DEBUG: Loaded income data: {len(past_year_income)} transactions")
         
-        # Filter income transactions and sort by timestamp descending
-        income_transactions = [
-            transaction for transaction in activity_data 
-            if transaction.get("category") == "Income"
-        ]
-        income_transactions.sort(key=lambda x: x["timestamp"], reverse=True)
-        
-        if not income_transactions:
+        if not past_year_income:
+            # print("ERROR: No income data found")
             raise HTTPException(status_code=400, detail="No income data found")
         
-        # Get the latest income date and calculate one year before
-        latest_income_date = income_transactions[0]["timestamp"]
-        latest_date = datetime.fromisoformat(latest_income_date.replace('Z', '+00:00'))
-        one_year_ago = latest_date.replace(year=latest_date.year - 1)
-        
-        # Filter income transactions from the past year
-        past_year_income = [
-            transaction for transaction in income_transactions
-            if datetime.fromisoformat(transaction["timestamp"].replace('Z', '+00:00')) >= one_year_ago
-        ]
-        
-        # Calculate average monthly income
+        # print("DEBUG: Calculating income metrics...")
         total_income = sum(transaction["amount"] for transaction in past_year_income)
         months_in_data = len(set(
             datetime.fromisoformat(transaction["timestamp"].replace('Z', '+00:00')).strftime('%Y-%m')
             for transaction in past_year_income
         ))
         average_monthly_income = total_income / max(months_in_data, 1)
+        # print(f"DEBUG: Total income: ${total_income}, Months: {months_in_data}, Avg monthly: ${average_monthly_income}")
         
-        # Prepare data for AI analysis
-        budget_summary = {
+        # print("DEBUG: Preparing budget context...")
+        budget_context = {
             "monthly_income": round(average_monthly_income, 2),
             "months_analyzed": months_in_data,
-            "budget_categories": budget_data,
+            "current_budget": budget_data,
             "savings_goal": savings_data,
             "income_data_points": len(past_year_income)
         }
+        # print(f"DEBUG: Budget context prepared: {budget_context}")
         
-        # Create AI prompt for budget analysis
-        ai_prompt = f"""
-        Analyze this user's budget using the 50/30/20 rule where:
-        - 50% goes to essentials (rent, utilities, groceries, transportation, healthcare, etc.)
-        - 30% goes to fun/discretionary spending (entertainment, dining out, subscriptions, etc.)
-        - 20% goes to financial goals (savings, emergency fund, investments, etc.)
+        prompt = f"""Budget Analysis Data:
+{json.dumps(budget_context, indent=2)}
 
-        User's financial data:
-        - Monthly Income: ${budget_summary['monthly_income']}
-        - Months Analyzed: {budget_summary['months_analyzed']}
-        - Current Savings Goal: ${budget_summary['savings_goal']['goalAmount']}
-        - Current Savings Amount: ${budget_summary['savings_goal']['currentAmount']}
+Please analyze this budget data and provide insights based on the 50/30/20 rule:
+- 50% of income should go to needs (housing, utilities, groceries, transportation, insurance)
+- 30% of income should go to wants (entertainment, dining out, hobbies, shopping)  
+- 20% of income should go to savings and debt repayment
 
-        Budget Categories (amount = budgeted, spent = actual spent, lastMonthSpent = previous month):
-        {json.dumps(budget_data, indent=2)}
+Analyze their current budget allocation and spending patterns, and provide specific recommendations for optimization."""
 
-        Please analyze their current budget allocation and spending patterns. Consider:
-        1. How well they're following the 50/30/20 rule
-        2. Areas where they're overspending or underspending
-        3. Specific recommendations for each category
-        4. Whether their savings rate aligns with the 20% financial goals target
-
-        Return a JSON array with the following structure. For categories that need changes, provide new amounts. For categories that are fine, keep the same values:
-        [
-            {{ "category": "Category Name", "amount": new_budgeted_amount, "spent": actual_spent_amount, "lastMonthSpent": previous_month_spent_amount }}
-        ]
-
-        Only modify the "amount" field for categories that need budget adjustments. Keep "spent" and "lastMonthSpent" values the same as in the original data. Focus on providing actionable recommendations that help them optimize their budget according to the 50/30/20 rule.
-        """
+        # print("DEBUG: Creating session...")
+        session_id = f"budget_{uuid.uuid4().hex[:8]}"
+        user_id = "api_user"
+        # print(f"DEBUG: Session ID: {session_id}")
         
-        # Use AI to analyze the budget
-        if not API_KEY:
-            # Fallback analysis if no API key
-            analysis = {
-                "summary": f"Based on your monthly income of ${average_monthly_income:.2f}, here's your budget analysis:",
-                "insights": [
-                    "Your income data shows consistent monthly earnings",
-                    "Consider reviewing your spending patterns against the 50/30/20 rule",
-                    "Track your progress toward financial goals monthly"
-                ],
-                "recommendations": [
-                    "Allocate 50% of income to essentials",
-                    "Limit discretionary spending to 30% of income", 
-                    "Save 20% of income for financial goals"
-                ],
-                "budget_adjustments": budget_data  # Return original data as fallback
-            }
-        else:
-            # Use AI for analysis
-            global _model
-            if _model is None:
-                _model = genai.GenerativeModel(MODEL_NAME)
-            
-            try:
-                response = _model.generate_content(ai_prompt)
-                ai_analysis = response.text
+        await session_service.create_session(
+            app_name=APP_NAME,
+            user_id=user_id,
+            session_id=session_id,
+            state={"prompt": prompt}
+        )
+        # print("DEBUG: Session created successfully")
+        
+        # print("DEBUG: Creating runner...")
+        runner = Runner(
+            agent=budget_analyzer,
+            app_name=APP_NAME,
+            session_service=session_service
+        )
+        # print("DEBUG: Runner created successfully")
+        
+        # print("DEBUG: Running analysis...")
+        # Create a user message to trigger the agent
+        user_message = Content(parts=[Part(text=prompt)])
+        
+        final_response = ""
+        event_count = 0
+        async for event in runner.run_async(
+            user_id=user_id,
+            session_id=session_id,
+            new_message=user_message
+        ):
+            event_count += 1
+            # print(f"DEBUG: Event {event_count}: {type(event).__name__}")
+            if event.is_final_response() and event.content and event.content.parts:
+                final_response = event.content.parts[0].text
+                # print(f"DEBUG: Got final response, length: {len(final_response)}")
+                break
+        
+        # print(f"DEBUG: Analysis completed after {event_count} events")
+        
+        # print("DEBUG: Extracting analysis result...")
+        analysis_text = final_response if final_response else "Analysis completed"
+        # print(f"DEBUG: Analysis text length: {len(analysis_text)}")
+        # print(f"DEBUG: Analysis text preview: {analysis_text[:200]}...")
+        
+        # Try to extract JSON from AI response
+        try:
+            # Look for JSON array in the response
+            json_match = re.search(r'\[.*?\]', analysis_text, re.DOTALL)
+            if json_match:
+                ai_budget_adjustments = json.loads(json_match.group())
+                # Create a map of AI recommendations
+                ai_recommendations = {item['category']: item['amount'] for item in ai_budget_adjustments}
                 
-                # Try to extract JSON from AI response
-                try:
-                    # Look for JSON array in the response
-                    json_match = re.search(r'\[.*\]', ai_analysis, re.DOTALL)
-                    if json_match:
-                        ai_budget_adjustments = json.loads(json_match.group())
-                        # Restructure the data: move AI's amount to newAmount, keep original as amount
-                        budget_adjustments = []
-                        for ai_item in ai_budget_adjustments:
-                            # Find the corresponding original budget item
-                            original_item = next((item for item in budget_data if item['category'] == ai_item['category']), None)
-                            if original_item:
-                                restructured_item = {
-                                    'category': ai_item['category'],
-                                    'amount': original_item['amount'],  # Original amount (previous value)
-                                    'newAmount': ai_item['amount'],     # AI's suggested amount (new value)
-                                    'spent': original_item['spent'],    # Keep original spent
-                                    'lastMonthSpent': original_item['lastMonthSpent']  # Keep original lastMonthSpent
-                                }
-                                budget_adjustments.append(restructured_item)
-                            else:
-                                # If category not found in original data, use AI data as-is
-                                budget_adjustments.append(ai_item)
-                    else:
-                        budget_adjustments = budget_data
-                except:
-                    budget_adjustments = budget_data
-                
-                analysis = {
-                    "summary": f"AI-powered budget analysis based on your ${average_monthly_income:.2f} monthly income:",
-                    "insights": [
-                        f"Analyzed {months_in_data} months of income data",
-                        f"Total income past year: ${total_income:.2f}",
-                        "Recommendations based on 50/30/20 rule"
-                    ],
-                    "recommendations": [
-                        "Review category allocations monthly",
-                        "Track spending against budgeted amounts",
-                        "Adjust allocations based on income changes"
-                    ],
-                    "budget_adjustments": budget_adjustments,
-                    "ai_analysis": ai_analysis
-                }
-            except Exception as e:
-                # Fallback if AI fails
-                analysis = {
-                    "summary": f"Budget analysis based on your ${average_monthly_income:.2f} monthly income:",
-                    "insights": [
-                        f"Analyzed {months_in_data} months of income data",
-                        "Consider the 50/30/20 rule for budget allocation"
-                    ],
-                    "recommendations": [
-                        "Allocate 50% to essentials",
-                        "Limit discretionary spending to 30%",
-                        "Save 20% for financial goals"
-                    ],
-                    "budget_adjustments": budget_data
-                }
+                # Build budget adjustments with AI recommendations where available
+                budget_adjustments = []
+                for category in budget_data:
+                    budget_adjustments.append({
+                        "category": category["category"],
+                        "amount": category["amount"],  # Original amount (previous value)
+                        "newAmount": ai_recommendations.get(category["category"], category["amount"]),  # AI's recommended amount or original
+                        "spent": category["spent"],
+                        "lastMonthSpent": category["lastMonthSpent"]
+                    })
+            else:
+                # No JSON found, use original data
+                budget_adjustments = []
+                for category in budget_data:
+                    budget_adjustments.append({
+                        "category": category["category"],
+                        "amount": category["amount"],
+                        "spent": category["spent"],
+                        "lastMonthSpent": category["lastMonthSpent"],
+                        "newAmount": category["amount"]  # Default to same amount
+                    })
+        except (json.JSONDecodeError, ValueError) as e:
+            # Fallback if JSON parsing fails
+            budget_adjustments = []
+            for category in budget_data:
+                budget_adjustments.append({
+                    "category": category["category"],
+                    "amount": category["amount"],
+                    "spent": category["spent"],
+                    "lastMonthSpent": category["lastMonthSpent"],
+                    "newAmount": category["amount"]  # Default to same amount
+                })
+        
+        # print("DEBUG: Building final analysis response...")
+        # print(f"DEBUG: Summary: {summary}")
+        # print(f"DEBUG: Insights count: {len(insights)}")
+        # print(f"DEBUG: Recommendations count: {len(recommendations)}")
+        
+        analysis = {
+            "summary": f"AI-powered budget analysis based on your ${average_monthly_income:.2f} monthly income:",
+            "insights": [
+                f"Analyzed {months_in_data} months of income data",
+                f"Total income past year: ${total_income:.2f}",
+                "Recommendations based on 50/30/20 rule"
+            ],
+            "recommendations": [
+                "Review category allocations monthly",
+                "Track spending against budgeted amounts",
+                "Adjust allocations based on income changes"
+            ],
+            "budget_adjustments": budget_adjustments,
+            "ai_analysis": analysis_text
+        }
+        
+        # print("DEBUG: Analysis response built successfully")
+        # print("=" * 50)
+        # print("DEBUG: analyze_budget endpoint completed successfully")
+        # print("=" * 50)
         
         return analysis
     except FileNotFoundError as e:
+        # print(f"ERROR: Data file not found: {e}")
         raise HTTPException(status_code=404, detail=f"Data file not found: {e}")
     except json.JSONDecodeError as e:
+        # print(f"ERROR: Invalid JSON in data file: {e}")
         raise HTTPException(status_code=500, detail=f"Invalid JSON in data file: {e}")
     except Exception as e:
+        # print(f"ERROR: Unexpected error in analyze_budget: {e}")
+        # import traceback
+        # traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error analyzing budget: {e}")

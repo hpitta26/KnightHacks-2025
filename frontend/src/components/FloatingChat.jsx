@@ -3,7 +3,7 @@ import { HiSparkles } from 'react-icons/hi';
 import { FaCircleArrowUp } from 'react-icons/fa6';
 import { HiMiniPencilSquare } from "react-icons/hi2";
 
-function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) {
+function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved, consultationState, onInvestmentAnalysis, onInvestmentAnalysisCompleted }) {
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -22,7 +22,21 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) 
   // Sync with external messageValue
   useEffect(() => {
     if (messageValue && messageValue !== inputValue) {
-      setInputValue(messageValue);
+      if (messageValue === 'CONSULTATION_BUDGET_ANALYSIS') {
+        handleQuickAction('budget');
+        setInputValue('');
+        if (onMessageChange) {
+          onMessageChange('');
+        }
+      } else if (messageValue === 'CONSULTATION_INVESTMENT_ANALYSIS') {
+        handleQuickAction('investments');
+        setInputValue('');
+        if (onMessageChange) {
+          onMessageChange('');
+        }
+      } else {
+        setInputValue(messageValue);
+      }
     }
   }, [messageValue]);
 
@@ -167,6 +181,11 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) 
         timestamp: new Date()
       };
       setMessages(prev => [...prev, confirmationMessage]);
+      
+      // Trigger investment analysis after budget approval
+      if (onInvestmentAnalysis) {
+        onInvestmentAnalysis();
+      }
     } else if (action === 'deny') {
       console.log('Budget denied');
       const denialMessage = {
@@ -176,6 +195,11 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) 
         timestamp: new Date()
       };
       setMessages(prev => [...prev, denialMessage]);
+      
+      // Trigger investment analysis after budget denial as well
+      if (onInvestmentAnalysis) {
+        onInvestmentAnalysis();
+      }
     }
     
     setShowBudgetActions(false);
@@ -194,11 +218,11 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) 
           if (data.budget_adjustments && Array.isArray(data.budget_adjustments)) {
             formattedResponse += '**Budget Adjustments:**';
             data.budget_adjustments.forEach(adjustment => {
-              formattedResponse += `\n\n**${adjustment.category}:**\n- Previous Value: $${adjustment.amount}\n- New Value: $${adjustment.newAmount}`;
+              formattedResponse += `\n\n**${adjustment.category}:**\n\n- Previous Value: $${adjustment.amount}\n- New Value: $${adjustment.newAmount}`;
             });
           }
           if (data.insights && Array.isArray(data.insights)) {
-            formattedResponse += `\n\n**Key Insights:**\n${data.insights.map(insight => `• ${insight}`).join('\n')}`;
+            formattedResponse += `\n\n**Key Insights:**\n\n${data.insights.map(insight => `• ${insight}`).join('\n')}`;
           }
           return formattedResponse;
         },
@@ -215,7 +239,11 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) 
         method: 'GET',
         headers: {},
         processResponse: (data) => data.reply,
-        onSuccess: () => {}
+        onSuccess: () => {
+          if (consultationState?.isActive && onInvestmentAnalysisCompleted) {
+            onInvestmentAnalysisCompleted();
+          }
+        }
       }
     };
 
@@ -278,7 +306,7 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) 
   };
 
   return (
-    <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-2xl flex flex-col h-full">
+    <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-2xl flex flex-col h-full relative z-50">
       {/* Header */}
       <div className="py-2 px-3 border-b border-gray-200 dark:border-[#38393c] flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -301,6 +329,9 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) 
                 }
               ]);
               setInputValue('');
+              // Clear any budget action buttons when starting new chat
+              setShowBudgetActions(false);
+              setLastBudgetAnalysis(null);
             }}
             className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
           >
@@ -353,7 +384,7 @@ function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) 
                   ? 'text-white/70' 
                   : 'text-gray-500 dark:text-gray-400'
               }`}>
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {message.timestamp ? message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
           </div>

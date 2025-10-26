@@ -1,6 +1,6 @@
 import { HiX } from 'react-icons/hi';
 
-function InvestmentModal({ isOpen, onClose, selectedAccount }) {
+function InvestmentModal({ isOpen, onClose, selectedAccount, consultationState, onStocksClicked }) {
 
   const accounts = {
     '401k': {
@@ -183,7 +183,7 @@ function InvestmentModal({ isOpen, onClose, selectedAccount }) {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/75 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/75 flex items-center justify-center z-40"
       onClick={onClose}
     >
       <div 
@@ -233,7 +233,16 @@ function InvestmentModal({ isOpen, onClose, selectedAccount }) {
           {account && (
             <div className="space-y-2">
               {account.holdings.map((holding) => (
-                <div key={holding.id} className="p-4 bg-gray-50 dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-[#38393c]">
+                <div 
+                  key={holding.id} 
+                  className={`p-4 bg-gray-50 dark:bg-[#141414] rounded-lg border border-gray-200 dark:border-[#38393c] ${consultationState?.highlightStocks ? 'consultation-highlight rounded-lg' : ''}`}
+                  onClick={() => {
+                    if (consultationState?.highlightStocks && onStocksClicked) {
+                      onStocksClicked();
+                    }
+                  }}
+                  style={{ cursor: consultationState?.highlightStocks ? 'pointer' : 'default' }}
+                >
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <div className="flex items-center gap-2 mb-1">

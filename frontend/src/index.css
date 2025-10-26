@@ -6,3 +6,37 @@ body,
 #root {
   height: 100%;
 }
+
+/* Consultation pipeline highlighting styles */
+@keyframes pulse-yellow {
+  0%, 100% {
+    transform: scale(1);
+    border-color: #fef3c7;
+    box-shadow: 0 0 0 0 rgba(254, 243, 199, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    border-color: #fde68a;
+    box-shadow: 0 0 0 3px rgba(254, 243, 199, 0.2);
+  }
+}
+
+.consultation-highlight {
+  animation: pulse-yellow 2s ease-in-out infinite;
+  border: 2px solid #fef3c7 !important;
+  border-radius: inherit !important;
+  position: relative;
+  z-index: 1;
+}
+
+.consultation-highlight.rounded-2xl {
+  border-radius: 1rem !important; /* 16px */
+}
+
+.consultation-highlight.rounded-xl {
+  border-radius: 0.75rem !important; /* 12px */
+}
+
+.consultation-highlight.rounded-lg {
+  border-radius: 0.5rem !important; /* 8px */
+}
