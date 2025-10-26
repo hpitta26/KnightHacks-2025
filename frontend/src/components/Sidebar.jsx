@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { HiChevronDown, HiChevronRight } from 'react-icons/hi';
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
 import CashModal from './modals/CashModal';
+import InvestmentModal from './modals/InvestmentModal';
+import CreditModal from './modals/CreditModal';
+import LoanModal from './modals/LoanModal';
 
 function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -11,6 +14,12 @@ function Sidebar() {
   const [isLoansOpen, setIsLoansOpen] = useState(false);
   const [isCashModalOpen, setIsCashModalOpen] = useState(false);
   const [selectedCashAccount, setSelectedCashAccount] = useState(null);
+  const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
+  const [selectedInvestmentAccount, setSelectedInvestmentAccount] = useState(null);
+  const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
+  const [selectedCreditAccount, setSelectedCreditAccount] = useState(null);
+  const [isLoanModalOpen, setIsLoanModalOpen] = useState(false);
+  const [selectedLoanAccount, setSelectedLoanAccount] = useState(null);
 
   if (isCollapsed) {
     return (
@@ -288,7 +297,13 @@ function Sidebar() {
           {isInvestmentsOpen && (
             <div className="space-y-2">
               {/* Investment Accounts */}
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedInvestmentAccount('401k');
+                  setIsInvestmentModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -307,9 +322,15 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedInvestmentAccount('ameritrade');
+                  setIsInvestmentModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -328,9 +349,15 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedInvestmentAccount('fidelity');
+                  setIsInvestmentModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -349,9 +376,15 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedInvestmentAccount('scholarshare');
+                  setIsInvestmentModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -370,7 +403,7 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
           )}
         </div>
@@ -400,7 +433,13 @@ function Sidebar() {
           {isCreditOpen && (
             <div className="space-y-2">
               {/* Credit Cards */}
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedCreditAccount('chase-sapphire');
+                  setIsCreditModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -419,9 +458,15 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedCreditAccount('amex-gold');
+                  setIsCreditModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -440,9 +485,15 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedCreditAccount('discover-cash');
+                  setIsCreditModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -461,7 +512,7 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
           )}
         </div>
@@ -491,7 +542,13 @@ function Sidebar() {
           {isLoansOpen && (
             <div className="space-y-2">
               {/* Loan Accounts */}
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedLoanAccount('wells-fargo-mortgage');
+                  setIsLoanModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -510,9 +567,15 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedLoanAccount('boa-auto');
+                  setIsLoanModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -531,9 +594,15 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c]">
+              <button
+                onClick={() => {
+                  setSelectedLoanAccount('sallie-mae-student');
+                  setIsLoanModalOpen(true);
+                }}
+                className="w-full p-3 rounded-lg bg-white dark:bg-[#141414] border border-gray-200 dark:border-[#38393c] text-left"
+              >
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -552,7 +621,7 @@ function Sidebar() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
           )}
         </div>
@@ -563,6 +632,27 @@ function Sidebar() {
         isOpen={isCashModalOpen} 
         onClose={() => setIsCashModalOpen(false)}
         selectedAccount={selectedCashAccount}
+      />
+
+      {/* Investment Modal */}
+      <InvestmentModal 
+        isOpen={isInvestmentModalOpen} 
+        onClose={() => setIsInvestmentModalOpen(false)}
+        selectedAccount={selectedInvestmentAccount}
+      />
+
+      {/* Credit Modal */}
+      <CreditModal 
+        isOpen={isCreditModalOpen} 
+        onClose={() => setIsCreditModalOpen(false)}
+        selectedAccount={selectedCreditAccount}
+      />
+
+      {/* Loan Modal */}
+      <LoanModal 
+        isOpen={isLoanModalOpen} 
+        onClose={() => setIsLoanModalOpen(false)}
+        selectedAccount={selectedLoanAccount}
       />
     </aside>
   );
