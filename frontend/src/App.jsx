@@ -15,7 +15,7 @@ function ProtectedRoute({ children, isLoggedIn }) {
 function App() {
   const [isDark, setIsDark] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
-    return savedTheme === "dark";
+    return savedTheme !== null ? savedTheme === "dark" : true; // Default to dark mode
   });
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
