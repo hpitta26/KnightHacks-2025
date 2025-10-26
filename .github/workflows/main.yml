@@ -12,26 +12,22 @@ jobs:
   deploy:
     runs-on: [self-hosted]
     steps:
-      - name: Checkout to fixed path
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: /opt/finterras
 
-      - name: Prepare Python backend (clean install)
-        working-directory: /opt/finterras/backend
+      - name: Sync repo to /opt/finterras (keep backend/.env)
         run: |
           set -euo pipefail
+          sudo rsync -a --delete \
+            --exclude '.git' \
+            --exclude 'backend/.env' \
+            "$GITHUB_WORKSPACE"/ /opt/finterras/
 
-          # Wipe venv
-          rm -rf venv
-
-      - name: Prepare frontend (clean install)
-        working-directory: /opt/finterras/frontend
+      - name: Clean old state
         run: |
           set -euo pipefail
-
-          # Use npm ci for reproducible clean install
-          rm -rf node_modules
+          rm -rf /opt/finterras/backend/venv
+          rm -rf /opt/finterras/frontend/node_modules
 
       - name: Restart services
         run: |
