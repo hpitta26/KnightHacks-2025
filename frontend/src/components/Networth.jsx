@@ -5,6 +5,24 @@ import { useState, useEffect } from 'react';
 function Networth() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Detect dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    
+    return () => observer.disconnect();
+  }, []);
 
   // Fetch networth data from backend
   useEffect(() => {
@@ -140,14 +158,16 @@ function Networth() {
               <Tooltip 
                 formatter={(value) => [formatCurrency(value), 'Net Worth']}
                 labelFormatter={(label) => `Date: ${label}`}
+                labelStyle={{ 
+                  color: isDarkMode ? "#ffffff" : "#374151"
+                }}
                 contentStyle={{
-                  backgroundColor: 'var(--tooltip-bg, white)',
-                  border: '1px solid var(--tooltip-border, #e5e7eb)',
+                  backgroundColor: isDarkMode ? '#1a1a1a' : '#f9fafb',
+                  border: isDarkMode ? '1px solid #38393c' : '1px solid #e5e7eb',
                   borderRadius: '8px',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  color: 'var(--tooltip-text, #374151)'
+                  color: isDarkMode ? '#ffffff' : '#374151'
                 }}
-                wrapperClassName="dark:bg-gray-800 dark:border-gray-600 dark:text-white"
               />
               <Line 
                 type="monotone" 
