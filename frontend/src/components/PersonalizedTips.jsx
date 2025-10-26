@@ -4,6 +4,7 @@ import { HiLightBulb, HiInformationCircle, HiExclamation, HiCheckCircle, HiDotsV
 export default function PersonalizedTips({ onConsult }) {
     const [openDropdown, setOpenDropdown] = useState(null);
     const dropdownRefs = useRef({});
+    const [dismissedTips, setDismissedTips] = useState(new Set());
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -20,6 +21,8 @@ export default function PersonalizedTips({ onConsult }) {
     const handleAction = (tip, action) => {
         if (action === 'consult' && onConsult) {
             onConsult(tip.description);
+        } else if (action === 'dismiss') {
+            setDismissedTips(prev => new Set(prev).add(tip.id));
         }
         setOpenDropdown(null);
     };
@@ -145,16 +148,17 @@ export default function PersonalizedTips({ onConsult }) {
                         </div>
                     </div>
                     <span className="px-2 py-1 bg-[#28ce78]/10 text-[#28ce78] text-xs font-medium rounded-full">
-                        {financialTips.length} tips
+                        {financialTips.filter(tip => !dismissedTips.has(tip.id)).length} tips
                     </span>
                 </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-3">
                 <div className="space-y-1">
-                {financialTips.map((tip) => {
+                {financialTips.filter(tip => !dismissedTips.has(tip.id)).map((tip, index, array) => {
                     const styles = getTipStyles(tip.type);
                     const Icon = tip.icon;
+                    const isLast = index === array.length - 1;
                     
                     return (
                     <div 
@@ -178,7 +182,7 @@ export default function PersonalizedTips({ onConsult }) {
                                 </button>
                                 
                                 {openDropdown === tip.id && (
-                                    <div className="absolute right-0 top-7 z-10 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-lg shadow-lg min-w-[120px]">
+                                    <div className={`absolute right-0 ${isLast ? 'bottom-7' : 'top-7'} z-10 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-lg shadow-lg min-w-[120px]`}>
                                         <button
                                             onClick={() => handleAction(tip, 'consult')}
                                             className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#262626] rounded-t-lg transition-colors"
