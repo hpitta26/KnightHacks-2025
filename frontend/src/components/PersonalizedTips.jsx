@@ -1,6 +1,27 @@
-import { HiLightBulb, HiInformationCircle, HiExclamation, HiCheckCircle } from 'react-icons/hi';
+import { useState, useRef, useEffect } from 'react';
+import { HiLightBulb, HiInformationCircle, HiExclamation, HiCheckCircle, HiDotsVertical } from 'react-icons/hi';
 
 export default function PersonalizedTips() {
+    const [openDropdown, setOpenDropdown] = useState(null);
+    const dropdownRefs = useRef({});
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (openDropdown && !dropdownRefs.current[openDropdown]?.contains(event.target)) {
+                setOpenDropdown(null);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [openDropdown]);
+
+    const handleAction = (tipId, action) => {
+        console.log(`${action} clicked for tip ${tipId}`);
+        setOpenDropdown(null);
+    };
+
     const financialTips = [
         {
             id: 1,
@@ -136,13 +157,41 @@ export default function PersonalizedTips() {
                     return (
                     <div 
                         key={tip.id} 
-                        className={`${styles.bg} ${styles.border} border rounded-lg p-2 transition-all hover:shadow-sm cursor-pointer`}
+                        className={`${styles.bg} ${styles.border} border rounded-lg p-2 transition-all hover:shadow-sm relative group`}
                     >
                         <div className="flex items-start gap-2">
-                        <Icon className={`w-3 h-3 ${styles.iconColor} mt-0.5 flex-shrink-0`} />
-                        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                            {tip.description}
-                        </p>
+                            <Icon className={`w-3 h-3 ${styles.iconColor} mt-0.5 flex-shrink-0`} />
+                            <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed flex-1">
+                                {tip.description}
+                            </p>
+                            <div className="relative" ref={el => dropdownRefs.current[tip.id] = el}>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenDropdown(openDropdown === tip.id ? null : tip.id);
+                                    }}
+                                    className=" p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded"
+                                >
+                                    <HiDotsVertical className="w-4 h-4 text-gray-500" />
+                                </button>
+                                
+                                {openDropdown === tip.id && (
+                                    <div className="absolute right-0 top-7 z-10 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#38393c] rounded-lg shadow-lg min-w-[120px]">
+                                        <button
+                                            onClick={() => handleAction(tip.id, 'consult')}
+                                            className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#262626] rounded-t-lg transition-colors"
+                                        >
+                                            Consult
+                                        </button>
+                                        <button
+                                            onClick={() => handleAction(tip.id, 'dismiss')}
+                                            className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#262626] rounded-b-lg transition-colors"
+                                        >
+                                            Dismiss
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                     );
