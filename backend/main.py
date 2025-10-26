@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
-from agents.agents import investment_analyzer, budget_analyzer, consultant
+from agents.agents import investment_analyzer, budget_analyzer, consultant, research_manager_system
 
 load_dotenv()
 
@@ -174,6 +174,16 @@ class ConsultationRequest(BaseModel):
 
 class ConsultationResponse(BaseModel):
     reply: str
+    model: str
+
+class ResearchRequest(BaseModel):
+    user_query: str
+    financial_data: Optional[dict] = None
+
+class ResearchResponse(BaseModel):
+    research_questions: list
+    findings: dict
+    coordinated_recommendations: str
     model: str
 
 
@@ -660,3 +670,197 @@ The user is now asking you for advice on how to address this issue. Provide a co
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Consultation error: {e}")
+
+
+@app.post("/research_pipeline", response_model=ResearchResponse)
+async def research_pipeline(request: ResearchRequest):
+    """
+    Demo endpoint for the research manager system.
+    This demonstrates how the research pipeline would work with real financial data.
+    """
+    print("=" * 60)
+    print("🔬 RESEARCH PIPELINE DEMO - Starting Research Manager System")
+    print("=" * 60)
+    
+    if not API_KEY:
+        raise HTTPException(status_code=500, detail="GOOGLE_API_KEY is not set")
+
+    try:
+        # Prepare comprehensive financial data for research
+        financial_context = {
+            "user_query": request.user_query,
+            "investment_data": INVESTMENT_DATA,
+            "budget_data": {},
+            "savings_data": {},
+            "income_data": {},
+            "consultation_data": CONSULTATION_DATA
+        }
+        
+        # Load additional data files if available
+        try:
+            with open("data/budget.json", "r") as file:
+                financial_context["budget_data"] = json.load(file)
+        except FileNotFoundError:
+            print("⚠️  Budget data not found, using empty data")
+        
+        try:
+            with open("data/savings.json", "r") as file:
+                financial_context["savings_data"] = json.load(file)
+        except FileNotFoundError:
+            print("⚠️  Savings data not found, using empty data")
+            
+        try:
+            with open("data/income.json", "r") as file:
+                financial_context["income_data"] = json.load(file)
+        except FileNotFoundError:
+            print("⚠️  Income data not found, using empty data")
+        
+        # Use provided financial data if available
+        if request.financial_data:
+            financial_context.update(request.financial_data)
+        
+        # Create comprehensive prompt for research
+        prompt = f"""Comprehensive Financial Research Request:
+
+User Query: "{request.user_query}"
+
+Financial Data Context:
+{json.dumps(financial_context, indent=2)}
+
+Please conduct comprehensive research across investment, budget, and market domains to provide actionable financial recommendations. The research should identify key questions, gather current data, and synthesize findings into a coordinated action plan."""
+
+        print(f"📊 Research Query: {request.user_query}")
+        print(f"📈 Investment Data: {len(INVESTMENT_DATA.get('holdings', []))} accounts")
+        print(f"💰 Budget Data: {len(financial_context.get('budget_data', {}))} categories")
+        
+        # Generate unique session ID for this research
+        session_id = f"research_{uuid.uuid4().hex[:8]}"
+        user_id = "api_user"
+        
+        print(f"🆔 Session ID: {session_id}")
+        
+        # Create session with comprehensive financial state
+        await session_service.create_session(
+            app_name=APP_NAME,
+            user_id=user_id,
+            session_id=session_id,
+            state={
+                "prompt": prompt,
+                "financial_context": financial_context,
+                "user_query": request.user_query
+            }
+        )
+        
+        print("✅ Session created successfully")
+        
+        # Create runner with the research manager system
+        runner = Runner(
+            agent=research_manager_system,
+            app_name=APP_NAME,
+            session_service=session_service
+        )
+        
+        print("🚀 Research Manager System initialized")
+        
+        # Create a user message to trigger the research pipeline
+        user_message = Content(parts=[Part(text=prompt)])
+        
+        # Run the research pipeline
+        print("🔍 Starting research pipeline execution...")
+        final_response = ""
+        research_questions = []
+        findings = {}
+        coordinated_recommendations = ""
+        
+        event_count = 0
+        async for event in runner.run_async(
+            user_id=user_id,
+            session_id=session_id,
+            new_message=user_message
+        ):
+            event_count += 1
+            print(f"📡 Event {event_count}: {type(event).__name__}")
+            
+            if event.is_final_response() and event.content and event.content.parts:
+                final_response = event.content.parts[0].text
+                print(f"✅ Final response received: {len(final_response)} characters")
+                break
+        
+        print(f"🎯 Research pipeline completed after {event_count} events")
+        
+        # Extract structured data from the research pipeline
+        try:
+            # Get session state to extract structured outputs
+            session_state = await session_service.get_session(
+                app_name=APP_NAME,
+                user_id=user_id,
+                session_id=session_id
+            )
+            
+            # Extract research questions
+            research_questions = session_state.state.get("research_questions", {}).get("questions", [])
+            
+            # Extract findings from each research agent
+            findings = {
+                "investment_research": session_state.state.get("investment_research", {}),
+                "budget_research": session_state.state.get("budget_research", {}),
+                "market_research": session_state.state.get("market_research", {})
+            }
+            
+            # Extract coordinated recommendations
+            coordinated_recommendations = session_state.state.get("coordinated_recommendations", final_response)
+            
+            print(f"📋 Research Questions: {len(research_questions)} identified")
+            print(f"🔬 Research Findings: {len([f for f in findings.values() if f])} domains completed")
+            print(f"📝 Coordinated Recommendations: {len(coordinated_recommendations)} characters")
+            
+        except Exception as e:
+            print(f"⚠️  Error extracting structured data: {e}")
+            # Fallback to using final response
+            research_questions = [{"question": request.user_query, "domain": "general", "priority": 5}]
+            findings = {"general": {"findings": [final_response], "sources": ["Research Pipeline"], "confidence": 4}}
+            coordinated_recommendations = final_response
+        
+        # Build response
+        response = ResearchResponse(
+            research_questions=research_questions,
+            findings=findings,
+            coordinated_recommendations=coordinated_recommendations,
+            model="research_manager_system"
+        )
+        
+        print("=" * 60)
+        print("🎉 RESEARCH PIPELINE DEMO COMPLETED SUCCESSFULLY")
+        print("=" * 60)
+        
+        return response
+
+    except Exception as e:
+        print(f"❌ ERROR in research pipeline: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Research pipeline error: {e}")
+
+
+# Demo function to test the research pipeline
+@app.get("/demo_research")
+async def demo_research():
+    """
+    Demo endpoint that automatically calls the research pipeline with sample data.
+    This shows how the research system would work in practice.
+    """
+    print("🎬 DEMO: Testing Research Manager System")
+    
+    # Sample research request
+    demo_request = ResearchRequest(
+        user_query="I want to optimize my investment portfolio and improve my budget allocation. I'm concerned about market volatility and want to maximize my savings rate.",
+        financial_data={
+            "age": 30,
+            "risk_tolerance": "moderate",
+            "investment_goals": ["retirement", "emergency_fund", "house_purchase"],
+            "time_horizon": "long_term"
+        }
+    )
+    
+    # Call the research pipeline
+    return await research_pipeline(demo_request)
