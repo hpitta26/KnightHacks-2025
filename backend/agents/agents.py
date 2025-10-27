@@ -1,4 +1,4 @@
-from google.adk.agents.llm_agent import Agent, LlmAgent, ParallelAgent, SequentialAgent
+from google.adk.agents.llm_agent import Agent, LlmAgent
 from google.adk.tools import google_search
 from typing import Dict, List
 from pydantic import BaseModel, Field
@@ -426,30 +426,30 @@ def create_research_delegation_system():
     """
     Creates a dynamic research delegation system that identifies questions and delegates to specialized research agents.
     """
+    return None
     
     # Create parallel research agents for different domains
-    parallel_research_agents = ParallelAgent(
-        name="ParallelResearchAgents",
-        sub_agents=[
-            investment_researcher,
-            budget_researcher,
-            market_researcher
-        ],
-        description="Executes research across investment, budget, and market domains in parallel"
-    )
+   #  parallel_research_agents = ParallelAgent(
+   #      name="ParallelResearchAgents",
+   #      sub_agents=[
+   #          investment_researcher,
+   #          budget_researcher,
+   #          market_researcher
+   #      ],
+   #      description="Executes research across investment, budget, and market domains in parallel"
+   #  )
     
     # Create the complete research workflow
-    research_workflow = SequentialAgent(
-        name="ResearchManagerWorkflow",
-        sub_agents=[
-            research_question_identifier,    # Step 1: Identify research questions
-            parallel_research_agents,        # Step 2: Execute parallel research
-            research_coordinator             # Step 3: Synthesize and coordinate findings
-        ],
-        description="Complete research management workflow: identify → research → coordinate"
-    )
-    
-    return research_workflow
+   #  research_workflow = SequentialAgent(
+   #      name="ResearchManagerWorkflow",
+   #      sub_agents=[
+   #          research_question_identifier,    # Step 1: Identify research questions
+   #          parallel_research_agents,        # Step 2: Execute parallel research
+   #          research_coordinator             # Step 3: Synthesize and coordinate findings
+   #      ],
+   #      description="Complete research management workflow: identify → research → coordinate"
+   #  )
+   #  return research_workflow
 
 # Create the research delegation system
 research_manager_system = create_research_delegation_system()

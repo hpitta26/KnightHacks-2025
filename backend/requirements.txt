@@ -69,6 +69,7 @@ opentelemetry-resourcedetector-gcp==1.10.0a0
 opentelemetry-sdk==1.37.0
 opentelemetry-semantic-conventions==0.58b0
 packaging==25.0
+pandas==2.3.3
 proto-plus==1.26.1
 protobuf==5.29.5
 pyasn1==0.6.1
@@ -81,6 +82,7 @@ pyparsing==3.2.5
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 python-multipart==0.0.20
+pytz==2025.2
 PyYAML==6.0.3
 referencing==0.37.0
 requests==2.32.5
@@ -98,9 +100,11 @@ tenacity==8.5.0
 tqdm==4.67.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0
+tzdata==2025.2
 tzlocal==5.3.1
 uritemplate==4.2.0
 urllib3==2.5.0
+uuid==1.30
 uvicorn==0.38.0
 watchdog==6.0.0
 websockets==15.0.1
