@@ -9,10 +9,7 @@ import { useConsultation } from '../contexts/ConsultationContext';
 function BentoGrid() {
   const {
     consultationState,
-    isConsultationMode,
     handleBudgetApproved,
-    handleInvestmentAnalysisCompleted,
-    handleStocksClicked,
     setIsInvestmentAnalysisLoading
   } = useConsultation();
   const [chatMessage, setChatMessage] = useState('');

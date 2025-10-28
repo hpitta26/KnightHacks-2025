@@ -1,4 +1,3 @@
-import { BsPiggyBankFill } from "react-icons/bs";
 import { useState, useEffect } from "react";
 
 function Savings() {

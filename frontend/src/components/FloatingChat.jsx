@@ -7,7 +7,6 @@ import { useConsultation } from '../contexts/ConsultationContext';
 function FloatingChat({ messageValue = '', onMessageChange, onBudgetApproved }) {
   const {
     isConsultationMode,
-    consultationState,
     setIsInvestmentAnalysisLoading,
     handleInvestmentAnalysisCompleted,
     handleInvestmentAnalysis,

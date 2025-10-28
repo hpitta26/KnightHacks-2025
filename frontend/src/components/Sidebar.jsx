@@ -11,11 +11,8 @@ function Sidebar() {
   const {
     isConsultationMode,
     consultationState,
-    isInvestmentTabOpen,
-    investmentAnalysisComplete,
     handleInvestmentPanelClicked,
     handleAmeritradeClicked,
-    handleStocksClicked
   } = useConsultation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isCashOpen, setIsCashOpen] = useState(false);

@@ -5,7 +5,6 @@ export default function Budget({
     currentMonth, 
     currentSpent, 
     currentBudget, 
-    lastMonthSpent, 
     progressPercentage, 
     lastMonthPercentage, 
     difference, 
